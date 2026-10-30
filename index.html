@@ -70,7 +70,22 @@
         <button data-nav="analytics" class="nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 whitespace-nowrap">
           <span>📊</span> <span>Thống Kê Năng Lực</span>
         </button>
+        <button id="navAdminTabBtn" data-nav="admin-panel" class="nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-amber-400/20 text-amber-300 border border-amber-400/40 hover:bg-amber-400 hover:text-slate-950 flex items-center gap-1.5 whitespace-nowrap">
+          <span>👑</span> <span>Quản Trị Admin</span>
+        </button>
       </nav>
+
+      <!-- User Account Status & Auth Trigger -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div id="headerUserBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs">
+          <span id="headerUserRoleIcon">👑</span>
+          <span id="headerUsernameText" class="font-extrabold text-amber-300">duytam939</span>
+          <span id="headerActivationTag" class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">ADMIN</span>
+        </div>
+        <button id="openAuthModalBtn" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1 shadow-sm">
+          <span>👤</span> <span id="authBtnLabel">Tài Khoản / Đổi TK</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -79,6 +94,36 @@
 
     <!-- ==================== VIEW 1: PHÒNG THI (SẢNH CHỌN 25 ĐỀ THEO 5 LEVEL TĂNG DẦN -> LÀM BÀI) ==================== -->
     <section id="view-exam-room" class="space-y-5">
+
+      <!-- ACTIVATION CODE GATE OVERLAY (SHOWN TO UNACTIVATED NON-ADMIN ACCOUNTS) -->
+      <div id="examActivationGate" class="hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 sm:p-8 border border-amber-400/40 shadow-xl space-y-5">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-extrabold">
+              <span>🔒 YÊU CẦU MÃ KÍCH HOẠT TÀI KHOẢN HỌC SINH</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold">Nhập Mã Kích Hoạt Để Mở Khóa Phòng Luyện Đề & Chuyên Đề</h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Tài khoản <strong id="gateAccountName" class="text-amber-300">hocsinh</strong> chưa được kích hoạt. Vui lòng nhập Mã Kích Hoạt do Admin (<strong class="text-white">duytam939</strong>) cấp để mở khóa kho 25 Đề Thi Thử và 10 Chuyên Đề (795 câu hỏi).
+            </p>
+            <div class="text-xs text-indigo-300">
+              💡 <em>Mẹo kiểm thử nhanh:</em> Bạn có thể nhập mã mẫu <code class="px-2 py-0.5 rounded bg-slate-800 text-amber-300 font-mono font-bold">HN10-VIP2026</code> hoặc đăng nhập tài khoản Admin <code class="px-2 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono font-bold">duytam939</code> / <code class="px-2 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono font-bold">duytam939</code> để tự tạo mã kích hoạt mới!
+            </div>
+          </div>
+          <div class="bg-slate-800/90 p-5 rounded-2xl border border-slate-700 w-full lg:w-96 space-y-3">
+            <label class="block text-xs font-bold uppercase text-slate-300">Nhập Mã Kích Hoạt Của Bạn:</label>
+            <input id="studentActivationCodeInput" type="text" placeholder="VD: HN10-VIP2026" class="w-full px-4 py-2.5 rounded-xl border border-slate-600 bg-slate-900 text-amber-300 font-mono font-extrabold text-sm uppercase focus:outline-none focus:border-amber-400" />
+            <button id="submitActivationCodeBtn" class="w-full py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
+              🔓 Kích Hoạt Mở Khóa Ngay
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESSION GATING STATUS BAR (60% LEVEL EXAMS + 20% EACH TOPIC EXCEPT CAU CHAN 10) -->
+      <div id="progressionStatusBanner" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3">
+        <!-- Populated dynamically by JS -->
+      </div>
 
       <!-- STAGE 1A: EXAM SELECTION LOBBY (25 ĐỀ SẮP XẾP TĂNG DẦN THEO 5 CẤP ĐỘ) -->
       <div id="examLobbyPanel" class="space-y-5">
@@ -93,6 +138,9 @@
               <h1 class="text-xl sm:text-2xl font-extrabold">Sảnh Chọn Đề Thi Thử Vào Lớp 10 (Lộ Trình Tăng Dần 5 Cấp Độ)</h1>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+              <button id="adminOpenExamEditorBtn" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs transition flex items-center gap-1.5">
+                <span>➕</span> <span>Thêm / Sửa Đề Thi (Admin)</span>
+              </button>
               <button id="goToTopicRoomHeroBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
                 📚 Sang Phòng Chuyên Đề (795 Câu) →
               </button>
@@ -228,6 +276,23 @@
 
     <!-- ==================== VIEW 2: PHÒNG CHUYÊN ĐỀ (SẢNH CHỌN 10 CHUYÊN ĐỀ -> LUYỆN 795 CÂU & 25 BÀI HÌNH LỚN) ==================== -->
     <section id="view-topic-room" class="hidden space-y-5">
+
+      <!-- TOPIC ACTIVATION GATE (FOR UNACTIVATED NON-ADMIN) -->
+      <div id="topicActivationGate" class="hidden bg-slate-900 text-white rounded-2xl p-6 border border-amber-400/40 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="text-xs font-extrabold text-amber-300 uppercase">🔒 PHÒNG CHUYÊN ĐỀ ĐANG KHÓA</div>
+          <h3 class="text-lg font-extrabold">Tài khoản cần nhập Mã Kích Hoạt để mở khóa 10 Chuyên Đề (795 câu hỏi)</h3>
+          <p class="text-xs text-slate-300">Nhập mã kích hoạt (VD: <code class="text-amber-300 font-mono">HN10-VIP2026</code>) tại Phòng Thi hoặc bấm nút bên cạnh để kích hoạt.</p>
+        </div>
+        <button id="jumpToActivateFromTopicBtn" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shrink-0">
+          🔑 Nhập Mã Kích Hoạt Ngay
+        </button>
+      </div>
+
+      <!-- TOPIC 20% UNIQUE PROGRESS SUMMARY BANNER -->
+      <div id="topicUniqueProgressBanner" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <!-- Populated dynamically by JS -->
+      </div>
 
       <!-- STAGE 2A: TOPIC SELECTION LOBBY -->
       <div id="topicLobbyPanel" class="space-y-5">
@@ -488,6 +553,303 @@
         </div>
       </div>
     </section>
+
+
+    <!-- ==================== VIEW 6: ADMIN MANAGEMENT CENTER (DÀNH RIÊNG CHO ADMIN duytam939) ==================== -->
+    <section id="view-admin-panel" class="hidden space-y-6">
+      <div class="bg-slate-900 text-white rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-extrabold">
+              <span>👑 TRUNG TÂM QUẢN TRỊ HỆ THỐNG — TÀI KHOẢN ADMIN: duytam939</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold">Quản Lý Tài Khoản, Phân Tích Điểm Số, Mã Kích Hoạt & Kho Đề Thi</h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Kiểm tra tổng quát điểm số, các đề đã làm, tiến độ % câu hỏi duy nhất của từng tài khoản trong hệ thống; phát hành Mã Kích Hoạt và Thêm/Sửa/Sinh đề tự động.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button data-admin-sub="accounts" class="admin-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-400 text-slate-950 transition">
+              👥 Quản Lý & Phân Tích Tài Khoản
+            </button>
+            <button data-admin-sub="codes" class="admin-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+              🔑 Tạo & Quản Lý Mã Kích Hoạt
+            </button>
+            <button data-admin-sub="exams" class="admin-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+              📝 Thêm / Sửa / Sinh Đề Thi
+            </button>
+          </div>
+        </div>
+
+        <!-- System-wide Admin KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
+          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+            <div class="text-[11px] font-bold text-slate-400 uppercase">Tổng số tài khoản</div>
+            <div id="adminKpiTotalUsers" class="text-2xl font-extrabold text-white mt-0.5">3</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+            <div class="text-[11px] font-bold text-slate-400 uppercase">Tài khoản đã kích hoạt</div>
+            <div id="adminKpiActivatedUsers" class="text-2xl font-extrabold text-emerald-400 mt-0.5">2</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+            <div class="text-[11px] font-bold text-slate-400 uppercase">Tổng số mã kích hoạt</div>
+            <div id="adminKpiTotalCodes" class="text-2xl font-extrabold text-amber-400 mt-0.5">4</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+            <div class="text-[11px] font-bold text-slate-400 uppercase">Tổng số đề trong hệ thống</div>
+            <div id="adminKpiTotalExams" class="text-2xl font-extrabold text-indigo-400 mt-0.5">25</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN SUB-PANEL 1: ACCOUNTS OVERVIEW & INDIVIDUAL STUDENT ANALYTICS -->
+      <div id="adminSubAccounts" class="space-y-5">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Danh Sách Toàn Bộ Tài Khoản & Tiến Độ Học Tập Trong Hệ Thống</h3>
+              <p class="text-xs text-slate-500">Nhấn <strong>"🔍 Xem Phân Tích Chi Tiết"</strong> ở bất kỳ tài khoản nào để kiểm tra toàn bộ lịch sử đề đã làm, điểm từng bài và tiến độ chuyên đề.</p>
+            </div>
+            <button id="adminCreateUserQuickBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition self-start sm:self-center">
+              ➕ Tạo Tài Khoản Mới
+            </button>
+          </div>
+
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead class="bg-slate-100 text-slate-700 font-bold">
+                <tr>
+                  <th class="py-3 px-3 border-b">Tài khoản (Username)</th>
+                  <th class="py-3 px-3 border-b">Mật khẩu</th>
+                  <th class="py-3 px-3 border-b">Họ và tên / Vai trò</th>
+                  <th class="py-3 px-3 border-b">Trạng thái Mã KH</th>
+                  <th class="py-3 px-3 border-b">Đề đã làm (Duy nhất)</th>
+                  <th class="py-3 px-3 border-b">Điểm TB / Cao nhất</th>
+                  <th class="py-3 px-3 border-b">Chuyên đề đạt ≥20%</th>
+                  <th class="py-3 px-3 border-b text-right">Thao tác Quản trị</th>
+                </tr>
+              </thead>
+              <tbody id="adminAccountsTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Detailed Inspector Card for Selected Account -->
+        <div id="adminStudentDetailPanel" class="bg-white rounded-2xl p-5 sm:p-6 border-2 border-indigo-500/30 shadow-md space-y-5">
+          <!-- Populated dynamically when Admin clicks a user -->
+        </div>
+      </div>
+
+      <!-- ADMIN SUB-PANEL 2: ACTIVATION CODE GENERATOR & MANAGER -->
+      <div id="adminSubCodes" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900">🔑 Phát Hành Mã Kích Hoạt Mới</h3>
+          <p class="text-xs text-slate-600">Tạo mã kích hoạt để cấp cho các tài khoản học sinh mở khóa Phòng Thi (25 Đề) và Phòng Chuyên Đề (795 Câu).</p>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Mã Kích Hoạt (Tùy chỉnh hoặc Sinh ngẫu nhiên):</label>
+              <div class="flex gap-2">
+                <input id="newCodeStringInput" type="text" value="HN10-2027-PRO88" class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 font-mono font-bold text-sm uppercase text-indigo-900" />
+                <button id="randomCodeGenBtn" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">🎲 Ngẫu nhiên</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Số lượt tài khoản tối đa được sử dụng mã này:</label>
+              <select id="newCodeMaxUsesSelect" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold">
+                <option value="1">1 tài khoản duy nhất (Mã cá nhân)</option>
+                <option value="5">5 tài khoản (Nhóm học tập)</option>
+                <option value="30" selected>30 tài khoản (Lớp học)</option>
+                <option value="999">Không giới hạn số lượt (999 lượt)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Ghi chú mã kích hoạt:</label>
+              <input id="newCodeNoteInput" type="text" placeholder="VD: Cấp cho học sinh lớp 9A1..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+            </div>
+            <button id="createActivationCodeBtn" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow transition">
+              ➕ Tạo & Lưu Mã Kích Hoạt
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Danh Sách Mã Kích Hoạt Đang Hoạt Động</h3>
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead class="bg-slate-100 text-slate-700 font-bold">
+                <tr>
+                  <th class="py-2.5 px-3 border-b">Mã Kích Hoạt</th>
+                  <th class="py-2.5 px-3 border-b">Ghi chú</th>
+                  <th class="py-2.5 px-3 border-b">Đã dùng / Tối đa</th>
+                  <th class="py-2.5 px-3 border-b">Tài khoản đã kích hoạt</th>
+                  <th class="py-2.5 px-3 border-b text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="adminCodesTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN SUB-PANEL 3: EXAM CREATOR, EDITOR & AUTO-GENERATOR (RESTRICTED TO ADMIN) -->
+      <div id="adminSubExams" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 id="adminExamFormTitle" class="text-base sm:text-lg font-extrabold text-slate-900">➕ Thêm Đề Thi Mới / Sửa Đề Thi</h3>
+            <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[11px]">Quyền Admin</span>
+          </div>
+          <p class="text-xs text-slate-600">Chỉ tài khoản Admin (<strong>duytam939</strong>) mới có quyền thêm đề mới, sửa thông tin đề hoặc sinh đề tự động vào kho đề hệ thống.</p>
+
+          <input id="editExamIdHidden" type="hidden" value="" />
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Mã Đề (VD: ĐỀ SỐ 26):</label>
+                <input id="adminExamCodeInput" type="text" value="ĐỀ SỐ 26" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Cấp độ khó (Level 1 → 5):</label>
+                <select id="adminExamLevelSelect" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold">
+                  <option value="1">Level 1: Cơ bản (7,5–8,0đ)</option>
+                  <option value="2">Level 2: Khá (8,0–8,5đ)</option>
+                  <option value="3" selected>Level 3: Khá Giỏi (8,5–9,0đ)</option>
+                  <option value="4">Level 4: Giỏi Top (9,0–9,5đ)</option>
+                  <option value="5">Level 5: Đỉnh cao (9,5–10đ)</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Năm học / Kỳ thi:</label>
+                <select id="adminExamYearSelect" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold">
+                  <option value="2027">Năm 2027 (Định hướng)</option>
+                  <option value="2026" selected>Năm 2026</option>
+                  <option value="2025">Năm 2025</option>
+                  <option value="2024">Năm 2024</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Phân loại nguồn:</label>
+                <select id="adminExamSourceSelect" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold">
+                  <option value="truong-top">Trường THCS Trọng Điểm</option>
+                  <option value="so-hn">Sở GD&ĐT / Phòng GD Quận</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Tên Trường / Sở / Phòng GD ra đề:</label>
+              <input id="adminExamSchoolInput" type="text" value="Trường THCS Yên Hòa (Cầu Giấy)" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-semibold" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Tiêu đề đầy đủ của Đề thi:</label>
+              <input id="adminExamTitleInput" type="text" value="Đề Thi Thử Vào Lớp 10 THPT — Trường THCS Yên Hòa, Cầu Giấy (2026)" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-semibold" />
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button id="adminSaveExamBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow transition">
+                💾 Lưu Đề Thi & Sinh Bộ Câu Hỏi Tự Động
+              </button>
+              <button id="adminResetExamFormBtn" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+                Làm mới
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Danh Sách Kho Đề Thi Hiện Có (Bấm "✏️ Sửa" để chỉnh sửa)</h3>
+          <div class="overflow-x-auto max-h-96 custom-scroll border border-slate-200 rounded-xl">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3 border-b">Mã Đề</th>
+                  <th class="py-2.5 px-3 border-b">Level</th>
+                  <th class="py-2.5 px-3 border-b">Trường / Sở</th>
+                  <th class="py-2.5 px-3 border-b">Năm</th>
+                  <th class="py-2.5 px-3 border-b text-right">Thao tác Admin</th>
+                </tr>
+              </thead>
+              <tbody id="adminExamsListTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== AUTHENTICATION & ACCOUNT SWITCHER MODAL ==================== -->
+    <div id="authModalBackdrop" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-6 border border-slate-200 shadow-2xl space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-extrabold text-[11px]">HỆ THỐNG TÀI KHOẢN & PHÂN QUYỀN</span>
+            <h3 class="text-lg font-extrabold text-slate-900 mt-1">Đăng Nhập Hoặc Tạo Tài Khoản Mới</h3>
+          </div>
+          <button id="closeAuthModalBtn" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm flex items-center justify-center">✕</button>
+        </div>
+
+        <!-- Quick Demo Switcher Strip -->
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="text-[11px] font-bold text-slate-500 uppercase">⚡ Chuyển nhanh tài khoản có sẵn (1-Click):</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button data-quick-login="duytam939" class="px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs">
+              👑 Admin: duytam939 (MK: duytam939)
+            </button>
+            <button data-quick-login="hocsinh01" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs">
+              🎓 HS Đã Kích Hoạt: hocsinh01
+            </button>
+            <button data-quick-login="hocsinh02" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs">
+              🔒 HS Chưa Kích Hoạt: hocsinh02
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs: Login vs Register -->
+        <div class="flex gap-2 border-b border-slate-200 pb-2">
+          <button id="tabAuthLoginBtn" class="flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white">Đăng Nhập Tài Khoản</button>
+          <button id="tabAuthRegisterBtn" class="flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200">Tạo Tài Khoản Mới (Đăng Ký)</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="authLoginForm" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tên tài khoản (Username):</label>
+            <input id="loginUsernameInput" type="text" value="duytam939" placeholder="Nhập tên tài khoản (VD: duytam939)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-mono font-bold" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu (Password):</label>
+            <input id="loginPasswordInput" type="password" value="duytam939" placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-mono font-bold" />
+          </div>
+          <button id="submitLoginBtn" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm shadow transition">
+            🔑 Đăng Nhập Ngay
+          </button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="authRegisterForm" class="hidden space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Tên đăng nhập mới (*):</label>
+              <input id="regUsernameInput" type="text" placeholder="VD: nam_toan10" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono font-bold" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu (*):</label>
+              <input id="regPasswordInput" type="password" placeholder="Nhập mật khẩu..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono font-bold" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Họ và tên học sinh / Trường THCS:</label>
+            <input id="regFullNameInput" type="text" placeholder="VD: Lê Hoàng Nam - THCS Cầu Giấy" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mã kích hoạt (Có thể nhập ngay hoặc nhập sau khi đăng nhập):</label>
+            <input id="regActivationCodeInput" type="text" placeholder="Để trống nếu chưa có mã (hoặc nhập HN10-VIP2026)" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono uppercase" />
+          </div>
+          <button id="submitRegisterBtn" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow transition">
+            ✨ Tạo Tài Khoản & Đăng Nhập
+          </button>
+        </div>
+      </div>
+    </div>
 
   </main>
 
@@ -1404,7 +1766,7 @@
           'Dạng 8.5: Xác suất lập số tự nhiên có 2 chữ số từ tập chữ số cho trước',
           'Dạng 8.6: Xác suất gieo đồng thời 2 xúc xắc hoặc 2 đồng xu cân đối',
           'Dạng 8.7: Xác suất chọn ngẫu nhiên học sinh/sản phẩm trong nhóm',
-          'Dạng 8.8: Sử dụng biến cố đối P(A) = 1 - P(Ā) trong bài toán thực tế'
+          'Dạng 8.8: Sử dụng biến cố đối P(A) = 1 - P(Ā) trong bài toán thực tế'
         ]
       },
       {
@@ -2537,7 +2899,11 @@
     // ============================================================================
     function switchView(viewName) {
       appState.currentView = viewName;
-      const views = ['exam-room', 'topic-room', 'algo-generator', 'math-lab', 'analytics'];
+      if ((viewName === 'admin-panel' || viewName === 'algo-generator') && !isCurrentUserAdmin()) {
+        showToast('Chức năng này chỉ dành cho tài khoản Admin (duytam939)!', 'warning');
+        return;
+      }
+      const views = ['exam-room', 'topic-room', 'algo-generator', 'math-lab', 'analytics', 'admin-panel'];
       views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (el) el.classList.toggle('hidden', v !== viewName);
@@ -2552,7 +2918,9 @@
         }
       });
 
-      if (viewName === 'topic-room') {
+      if (viewName === 'admin-panel') {
+        renderAdminDashboard();
+      } else if (viewName === 'topic-room') {
         renderMasteryTopicsNav();
       } else if (viewName === 'analytics') {
         renderAnalyticsView();
@@ -2660,6 +3028,12 @@
 
     function startExamSession(examId) {
       const examMeta = EXAM_CATALOG.find(e => e.id === examId) || EXAM_CATALOG[0];
+      const acc = getCurrentAccount();
+      const unlockInfo = isExamLevelUnlockedForUser(acc, examMeta.level);
+      if (!unlockInfo.unlocked) {
+        showToast(`🔒 Đề thuộc Level ${examMeta.level} đang khóa: ${unlockInfo.reason}`, 'warning');
+        return;
+      }
       appState.activeExamId = examMeta.id;
       appState.currentQuestionIndex = 0;
       appState.userAnswers = {};
@@ -4043,13 +4417,28 @@
           return;
         }
 
-        // Topic Mastery Room MCQ selection
+        // Topic Mastery Room MCQ selection (Deduplicated unique question tracking!)
         const topicOptBtn = e.target.closest('[data-topic-opt]');
         if (topicOptBtn) {
           const qIdx = parseInt(topicOptBtn.getAttribute('data-topic-q'), 10);
           const oIdx = parseInt(topicOptBtn.getAttribute('data-topic-opt'), 10);
           appState.topicUserAnswers[qIdx] = oIdx;
           appState.topicRevealed[qIdx] = true;
+
+          const acc = getCurrentAccount();
+          if (acc) {
+            if (!acc.uniqueSolvedTopicQuestions) acc.uniqueSolvedTopicQuestions = createInitialSolvedMap(false);
+            if (!acc.uniqueSolvedTopicQuestions[appState.activeTopicId]) acc.uniqueSolvedTopicQuestions[appState.activeTopicId] = {};
+            const qNum = qIdx + 1;
+            const wasAlreadySolved = !!acc.uniqueSolvedTopicQuestions[appState.activeTopicId][qNum];
+            acc.uniqueSolvedTopicQuestions[appState.activeTopicId][qNum] = true;
+            saveAuthStore();
+            renderProgressionBanners();
+            if (!wasAlreadySolved) {
+              const st = getTopicProgressStatsForUser(acc, appState.activeTopicId);
+              showToast(`Đã ghi nhận Câu ${qNum} vào tiến độ duy nhất (${st.uniqueCount}/${st.totalInTopic} câu — ${st.pct}%)!`, 'success');
+            }
+          }
           renderTopicQuestionsList();
           return;
         }
@@ -4115,13 +4504,1017 @@
       });
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      loadSavedHistory();
-      bindGlobalEvents();
+
+    // ============================================================================
+    // 14. ACCOUNT DATABASE, ACTIVATION CODES, ADMIN CENTER & PROGRESSION GATING
+    // ============================================================================
+    const DEFAULT_ACTIVATION_CODES = [
+      { code: 'HN10-VIP2026', note: 'Mã kích hoạt lớp luyện đề chất lượng cao 2026', maxUses: 30, usedBy: ['hocsinh01'], createdAt: '25/10/2026' },
+      { code: 'HN10-2027-PRO', note: 'Mã mở khóa định hướng 2027 toàn diện', maxUses: 50, usedBy: [], createdAt: '28/10/2026' },
+      { code: 'DUYTAM939-VIP', note: 'Mã đặc quyền do Admin duytam939 phát hành', maxUses: 999, usedBy: [], createdAt: '30/10/2026' }
+    ];
+
+    function createInitialSolvedMap(fillMin20Pct = false) {
+      const map = {};
+      MASTERY_TOPICS_META.forEach(t => {
+        map[t.id] = {};
+        if (fillMin20Pct && t.id !== 'cd7_chan10') {
+          // 20% of 80 questions = 16 unique questions (2 per subtype across 8 subtypes)
+          for (let sub = 0; sub < 8; sub++) {
+            const q1 = sub * 10 + 1;
+            const q2 = sub * 10 + 2;
+            map[t.id][q1] = true;
+            map[t.id][q2] = true;
+          }
+        }
+      });
+      return map;
+    }
+
+    const DEFAULT_ACCOUNTS = [
+      {
+        username: 'duytam939',
+        password: 'duytam939',
+        role: 'admin',
+        fullName: 'Admin Duy Tâm (Quản Trị Hệ Thống)',
+        isActivated: true,
+        activationCodeUsed: 'ADMIN-ROOT',
+        examHistory: [
+          {
+            id: 'adm-1', examId: 'de-24', examTitle: 'ĐỀ SỐ 24 (Lv5) — THPT Chuyên Hà Nội - Amsterdam',
+            date: '29/10/2026 21:00', score: 9.75, correctCount: 12, totalQuestions: 12,
+            partScores: { 1: 1.5, 2: 1.5, 3: 2.5, 4: 4.0, 5: 0.25 }
+          }
+        ],
+        uniqueExamsDone: { 'de-01': 10, 'de-02': 9.5, 'de-03': 9.5, 'de-24': 9.75 },
+        uniqueSolvedTopicQuestions: createInitialSolvedMap(true)
+      },
+      {
+        username: 'hocsinh01',
+        password: '123456',
+        role: 'student',
+        fullName: 'Nguyễn Minh Quân (9A1 - THCS Cầu Giấy)',
+        isActivated: true,
+        activationCodeUsed: 'HN10-VIP2026',
+        examHistory: [
+          {
+            id: 'hs1-1', examId: 'de-01', examTitle: 'ĐỀ SỐ 01 (Lv1) — Phòng GD&ĐT Quận Hoàng Mai',
+            date: '28/10/2026 19:30', score: 8.25, correctCount: 10, totalQuestions: 12,
+            partScores: { 1: 1.5, 2: 1.5, 3: 2.0, 4: 3.25, 5: 0.0 }
+          },
+          {
+            id: 'hs1-2', examId: 'de-03', examTitle: 'ĐỀ SỐ 03 (Lv1) — Sở GD&ĐT Hà Nội (Chính thức 2024)',
+            date: '29/10/2026 20:15', score: 8.5, correctCount: 10, totalQuestions: 12,
+            partScores: { 1: 1.5, 2: 1.5, 3: 2.25, 4: 3.25, 5: 0.0 }
+          }
+        ],
+        uniqueExamsDone: { 'de-01': 8.25, 'de-03': 8.5 },
+        uniqueSolvedTopicQuestions: createInitialSolvedMap(false)
+      },
+      {
+        username: 'hocsinh02',
+        password: '123456',
+        role: 'student',
+        fullName: 'Trần Thu Hà (9A3 - THCS Giảng Võ)',
+        isActivated: false,
+        activationCodeUsed: null,
+        examHistory: [],
+        uniqueExamsDone: {},
+        uniqueSolvedTopicQuestions: createInitialSolvedMap(false)
+      }
+    ];
+
+    const authStore = {
+      accounts: [],
+      codes: [],
+      currentUsername: 'duytam939',
+      inspectedUsername: 'hocsinh01'
+    };
+
+    function loadAuthStore() {
+      try {
+        const rawAcc = localStorage.getItem('hanoimath10_accounts_v5');
+        if (rawAcc) {
+          const parsed = JSON.parse(rawAcc);
+          if (Array.isArray(parsed) && parsed.length > 0) authStore.accounts = parsed;
+        }
+        const rawCodes = localStorage.getItem('hanoimath10_codes_v5');
+        if (rawCodes) {
+          const parsedC = JSON.parse(rawCodes);
+          if (Array.isArray(parsedC) && parsedC.length > 0) authStore.codes = parsedC;
+        }
+        const savedCur = localStorage.getItem('hanoimath10_current_user_v5');
+        if (savedCur) authStore.currentUsername = savedCur;
+      } catch (e) {}
+
+      if (authStore.accounts.length === 0) {
+        authStore.accounts = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+      }
+      // Always guarantee Admin 'duytam939' with password 'duytam939' exists!
+      let adminAcc = authStore.accounts.find(a => a.username === 'duytam939');
+      if (!adminAcc) {
+        authStore.accounts.unshift(JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS[0])));
+      } else {
+        adminAcc.password = 'duytam939';
+        adminAcc.role = 'admin';
+        adminAcc.isActivated = true;
+      }
+
+      if (authStore.codes.length === 0) {
+        authStore.codes = JSON.parse(JSON.stringify(DEFAULT_ACTIVATION_CODES));
+      }
+      syncCurrentUserToAppState();
+    }
+
+    function saveAuthStore() {
+      try {
+        localStorage.setItem('hanoimath10_accounts_v5', JSON.stringify(authStore.accounts));
+        localStorage.setItem('hanoimath10_codes_v5', JSON.stringify(authStore.codes));
+        localStorage.setItem('hanoimath10_current_user_v5', authStore.currentUsername);
+      } catch (e) {}
+    }
+
+    function getCurrentAccount() {
+      return authStore.accounts.find(a => a.username === authStore.currentUsername) || authStore.accounts[0];
+    }
+
+    function isCurrentUserAdmin() {
+      const acc = getCurrentAccount();
+      return acc && acc.role === 'admin' && acc.username === 'duytam939';
+    }
+
+    function syncCurrentUserToAppState() {
+      const acc = getCurrentAccount();
+      if (!acc) return;
+      if (!acc.uniqueExamsDone) acc.uniqueExamsDone = {};
+      if (!acc.uniqueSolvedTopicQuestions) acc.uniqueSolvedTopicQuestions = createInitialSolvedMap(false);
+      if (!acc.examHistory) acc.examHistory = [];
+      appState.examHistory = acc.examHistory;
+    }
+
+    // ------------------------------------------------------------------------
+    // PROGRESSION & MASTERY GATING CALCULATOR (60% LEVEL 1 -> LEVEL 2, 20% TOPICS EXCEPT CAU CHAN 10)
+    // ------------------------------------------------------------------------
+    function getTopicProgressStatsForUser(acc, topicId) {
+      const totalInTopic = topicId === 'cd6_hinh' ? 75 : 80;
+      const solvedObj = (acc.uniqueSolvedTopicQuestions && acc.uniqueSolvedTopicQuestions[topicId]) || {};
+      const uniqueCount = Object.keys(solvedObj).length;
+      const pct = Math.round((uniqueCount / totalInTopic) * 100);
+      const minRequired = Math.ceil(totalInTopic * 0.20); // 20% unique questions
+      const isExempt = topicId === 'cd7_chan10'; // Trừ câu chặn 10
+      const passed = isExempt || (uniqueCount >= minRequired);
+      return { uniqueCount, totalInTopic, pct, minRequired, isExempt, passed };
+    }
+
+    function getAllTopicsGateSummary(acc) {
+      const requiredTopics = MASTERY_TOPICS_META.filter(t => t.id !== 'cd7_chan10');
+      let passedCount = 0;
+      const details = MASTERY_TOPICS_META.map(t => {
+        const st = getTopicProgressStatsForUser(acc, t.id);
+        if (!st.isExempt && st.passed) passedCount++;
+        return { id: t.id, code: t.code, title: t.title, ...st };
+      });
+      return {
+        allPassed: passedCount === requiredTopics.length,
+        passedCount,
+        totalRequiredTopics: requiredTopics.length,
+        details
+      };
+    }
+
+    function getLevelExamStatsForUser(acc, levelNum) {
+      const levelExams = EXAM_CATALOG.filter(e => e.level === levelNum);
+      const totalExams = levelExams.length;
+      const doneMap = acc.uniqueExamsDone || {};
+      let uniqueDone = 0;
+      levelExams.forEach(e => {
+        if (doneMap[e.id] !== undefined) uniqueDone++;
+      });
+      const minReq = Math.ceil(totalExams * 0.60); // 60% of level exams (e.g. 3/5 exams)
+      const pct = totalExams > 0 ? Math.round((uniqueDone / totalExams) * 100) : 100;
+      return { uniqueDone, totalExams, minReq, pct, passed60: uniqueDone >= minReq };
+    }
+
+    function isExamLevelUnlockedForUser(acc, targetLevel) {
+      if (!acc) return { unlocked: false, reason: 'Chưa đăng nhập' };
+      if (acc.role === 'admin') return { unlocked: true, reason: 'Toàn quyền Admin (duytam939)' };
+      if (!acc.isActivated) return { unlocked: false, reason: 'Cần nhập Mã Kích Hoạt' };
+      if (targetLevel <= 1) return { unlocked: true, reason: 'Mức đầu (Level 1) không giới hạn' };
+
+      const prevLv = targetLevel - 1;
+      const prevStat = getLevelExamStatsForUser(acc, prevLv);
+      const topicGate = getAllTopicsGateSummary(acc);
+
+      if (!prevStat.passed60 && !topicGate.allPassed) {
+        return {
+          unlocked: false,
+          reason: `Cần làm đủ ≥60% đề Level ${prevLv} (hiện tại ${prevStat.uniqueDone}/${prevStat.minReq} đề) VÀ đạt ≥20% số câu mỗi chuyên đề trừ Câu chặn 10 (${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề đạt)`
+        };
+      }
+      if (!prevStat.passed60) {
+        return {
+          unlocked: false,
+          reason: `Chưa làm đủ 60% số đề của Level ${prevLv} (Đã làm ${prevStat.uniqueDone}/${prevStat.totalExams} đề, cần tối thiểu ${prevStat.minReq} đề khác nhau)`
+        };
+      }
+      if (!topicGate.allPassed) {
+        return {
+          unlocked: false,
+          reason: `Cần hoàn thành tối thiểu 20% số câu duy nhất ở mỗi chuyên đề trừ Câu chặn 10 (Đã đạt ${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề)`
+        };
+      }
+      return { unlocked: true, reason: 'Đã đủ điều kiện mở khóa' };
+    }
+
+    // ------------------------------------------------------------------------
+    // UPDATE UI FOR CURRENT USER ROLE, ACTIVATION GATE & PROGRESSION BANNERS
+    // ------------------------------------------------------------------------
+    function refreshAuthAndRoleUI() {
+      const acc = getCurrentAccount();
+      const isAdmin = isCurrentUserAdmin();
+
+      // Header badges
+      document.getElementById('headerUserRoleIcon').textContent = isAdmin ? '👑' : '🎓';
+      document.getElementById('headerUsernameText').textContent = acc.username;
+      const actTag = document.getElementById('headerActivationTag');
+      if (actTag) {
+        if (isAdmin) {
+          actTag.className = 'px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px] font-extrabold';
+          actTag.textContent = 'ADMIN';
+        } else if (acc.isActivated) {
+          actTag.className = 'px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold';
+          actTag.textContent = 'ĐÃ KÍCH HOẠT';
+        } else {
+          actTag.className = 'px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-bold';
+          actTag.textContent = 'CHƯA KÍCH HOẠT';
+        }
+      }
+
+      // Show/Hide Admin-only controls (Thêm đề, Sửa đề, Sinh đề tự động, Tạo đề, Quản trị Admin)
+      document.getElementById('navAdminTabBtn')?.classList.toggle('hidden', !isAdmin);
+      document.querySelector('[data-nav="algo-generator"]')?.classList.toggle('hidden', !isAdmin);
+      document.getElementById('adminOpenExamEditorBtn')?.classList.toggle('hidden', !isAdmin);
+      document.getElementById('regenerateWholeExamBtn')?.classList.toggle('hidden', !isAdmin);
+      document.getElementById('topicRegenBatchBtn')?.classList.toggle('hidden', !isAdmin);
+
+      // Activation Gate Overlays for non-admin unactivated users
+      const isLockedByActivation = !isAdmin && !acc.isActivated;
+      document.getElementById('examActivationGate')?.classList.toggle('hidden', !isLockedByActivation);
+      document.getElementById('examLobbyPanel')?.classList.toggle('hidden', isLockedByActivation || appState.examStage !== 'lobby');
+      document.getElementById('progressionStatusBanner')?.classList.toggle('hidden', isLockedByActivation);
+      const gateAccName = document.getElementById('gateAccountName');
+      if (gateAccName) gateAccName.textContent = `${acc.username} (${acc.fullName})`;
+
+      document.getElementById('topicActivationGate')?.classList.toggle('hidden', !isLockedByActivation);
+      document.getElementById('topicLobbyPanel')?.classList.toggle('hidden', isLockedByActivation || appState.topicStage !== 'lobby');
+      document.getElementById('topicUniqueProgressBanner')?.classList.toggle('hidden', isLockedByActivation);
+
+      renderProgressionBanners();
       renderExamCatalog();
       renderMasteryTopicsNav();
+      if (isAdmin) renderAdminDashboard();
+    }
+
+    function renderProgressionBanners() {
+      const acc = getCurrentAccount();
+      const isAdmin = isCurrentUserAdmin();
+      const progBanner = document.getElementById('progressionStatusBanner');
+      const topicBanner = document.getElementById('topicUniqueProgressBanner');
+
+      const lv1Stat = getLevelExamStatsForUser(acc, 1);
+      const topicGate = getAllTopicsGateSummary(acc);
+      const lv2Unlock = isExamLevelUnlockedForUser(acc, 2);
+
+      if (progBanner) {
+        progBanner.innerHTML = `
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-extrabold text-xs">
+                  ${isAdmin ? '👑 CHẾ ĐỘ ADMIN (MỞ KHÓA TOÀN BỘ 25 ĐỀ & QUYỀN SỬA/THÊM/SINH ĐỀ)' : '🎯 LỘ TRÌNH MỞ KHÓA CẤP ĐỘ ĐỀ THI (1 ĐỀ / 1 CÂU LÀM NHIỀU LẦN CHỈ TÍNH 1 LẦN)'}
+                </span>
+              </div>
+              <p class="text-xs text-slate-600">
+                <strong>Level 1 (Đề 01–05):</strong> Không giới hạn. • <strong>Để mở khóa Level 2+:</strong> Cần hoàn thành tối thiểu <strong>60% số đề duy nhất của mức trước (≥ 3/5 đề)</strong> VÀ làm tối thiểu <strong>20% số câu duy nhất ở mỗi chuyên đề (trừ Câu chặn 10)</strong>.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+              <div class="px-3 py-2 rounded-xl border ${lv1Stat.passed60 ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'} text-xs font-bold">
+                Đề Level 1: ${lv1Stat.uniqueDone}/${lv1Stat.totalExams} đề (${lv1Stat.pct}% • Cần ≥60%)
+              </div>
+              <div class="px-3 py-2 rounded-xl border ${topicGate.allPassed ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-indigo-50 border-indigo-200 text-indigo-900'} text-xs font-bold">
+                Chuyên đề ≥20% (trừ Chặn 10): ${topicGate.passedCount}/${topicGate.totalRequiredTopics} đạt
+              </div>
+              <div class="px-3 py-2 rounded-xl font-extrabold text-xs ${lv2Unlock.unlocked ? 'bg-emerald-600 text-white' : 'bg-rose-100 text-rose-800 border border-rose-200'}">
+                ${lv2Unlock.unlocked ? '🔓 Đã Mở Khóa Level 2' : '🔒 Level 2 Đang Khóa'}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (topicBanner) {
+        topicBanner.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs sm:text-sm font-extrabold text-slate-900">
+                📊 Tiến Độ Câu Hỏi Duy Nhất Theo Chuyên Đề (Mỗi chuyên đề cần ≥ 20% số câu để mở khóa Level đề thi tiếp theo, riêng Câu chặn 10 không bắt buộc)
+              </div>
+              <span class="text-xs font-bold text-indigo-600">Lưu ý: 1 câu làm nhiều lần chỉ tính là 1 câu đã làm</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              ${topicGate.details.map(d => `
+                <div class="p-2.5 rounded-xl border ${d.passed ? 'bg-emerald-50/70 border-emerald-200' : 'bg-slate-50 border-slate-200'} text-xs">
+                  <div class="flex items-center justify-between font-bold ${d.passed ? 'text-emerald-800' : 'text-slate-700'}">
+                    <span>${d.code.replace(' (CHỦ ĐỀ BỔ TRỢ)', '')}</span>
+                    <span>${d.isExempt ? 'Miễn (Chặn 10)' : d.pct + '%'}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">Đã làm: <strong>${d.uniqueCount}/${d.totalInTopic}</strong> câu ${d.isExempt ? '' : `(Cần ≥${d.minRequired})`}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Override renderExamCatalog to enforce Level Gating & Admin Edit buttons
+    const _origRenderExamCatalog = renderExamCatalog;
+    renderExamCatalog = function() {
+      const acc = getCurrentAccount();
+      const isAdmin = isCurrentUserAdmin();
+      const levelFilter = appState.examLevelFilter || 'all';
+      const yearFilter = document.getElementById('filterYearSelect')?.value || 'all';
+      const sourceFilter = document.getElementById('filterSourceSelect')?.value || 'all';
+      const searchQuery = (document.getElementById('searchExamInput')?.value || '').trim().toLowerCase();
+
+      const filtered = EXAM_CATALOG.filter(ex => {
+        if (levelFilter !== 'all' && String(ex.level) !== String(levelFilter)) return false;
+        if (yearFilter !== 'all' && ex.year !== yearFilter) return false;
+        if (sourceFilter !== 'all' && ex.sourceType !== sourceFilter) return false;
+        if (searchQuery) {
+          const hay = `${ex.code} ${ex.title} ${ex.school} ${ex.tags.join(' ')}`.toLowerCase();
+          if (!hay.includes(searchQuery)) return false;
+        }
+        return true;
+      });
+
+      const container = document.getElementById('examCardsGrid');
+      if (!container) return;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200 text-sm">Không tìm thấy đề thi phù hợp với bộ lọc.</div>`;
+        return;
+      }
+
+      let html = '';
+      for (let lv = 1; lv <= 5; lv++) {
+        const lvExams = filtered.filter(e => e.level === lv);
+        if (lvExams.length === 0) continue;
+        const lvMeta = EXAM_LEVEL_META[lv];
+        const unlockInfo = isExamLevelUnlockedForUser(acc, lv);
+        const lvStat = getLevelExamStatsForUser(acc, lv);
+
+        html += `
+          <div class="space-y-3">
+            <div class="px-4 py-2.5 rounded-xl bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2 shadow-sm">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-0.5 rounded ${lvMeta.badge} text-white font-extrabold text-xs">${lvMeta.stars}</span>
+                <span class="font-extrabold text-xs sm:text-sm">${lvMeta.name}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-300">Đã hoàn thành: <strong class="text-amber-300">${lvStat.uniqueDone}/${lvStat.totalExams} đề (${lvStat.pct}%)</strong></span>
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold ${unlockInfo.unlocked ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30' : 'bg-rose-500/20 text-rose-300 border border-rose-400/30'}">
+                  ${unlockInfo.unlocked ? '🔓 Đã mở khóa' : '🔒 Đang khóa'}
+                </span>
+              </div>
+            </div>
+
+            ${!unlockInfo.unlocked ? `
+              <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-semibold flex flex-wrap items-center justify-between gap-2">
+                <span>🔒 <strong>Điều kiện mở khóa Level ${lv}:</strong> ${unlockInfo.reason}</span>
+                <button data-nav-jump="topic-room" class="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold text-xs hover:bg-rose-700">Luyện Chuyên Đề Ngay →</button>
+              </div>
+            ` : ''}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              ${lvExams.map(ex => {
+                const bestScore = (acc.uniqueExamsDone && acc.uniqueExamsDone[ex.id] !== undefined)
+                  ? Number(acc.uniqueExamsDone[ex.id]).toFixed(2)
+                  : null;
+                return `
+                  <div class="bg-white rounded-2xl p-5 border ${unlockInfo.unlocked ? 'border-slate-200 hover:border-indigo-400' : 'border-slate-200 opacity-75 bg-slate-50'} shadow-sm transition flex flex-col justify-between gap-4">
+                    <div class="space-y-2">
+                      <div class="flex flex-wrap items-center justify-between gap-1.5">
+                        <div class="flex items-center gap-1.5">
+                          <span class="px-2.5 py-0.5 rounded-md ${lvMeta.badge} text-white font-extrabold text-xs">${ex.code}</span>
+                          <span class="px-2 py-0.5 rounded-md ${lvMeta.lightBadge} font-bold text-[11px]">Level ${ex.level} (${lvMeta.stars})</span>
+                        </div>
+                        ${bestScore ? `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px]">✓ Đã làm • ${bestScore}đ</span>` : `<span class="text-[11px] font-semibold text-slate-400">Năm ${ex.year}</span>`}
+                      </div>
+                      <div class="text-xs font-bold text-indigo-600">${ex.school}</div>
+                      <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ex.title}</h3>
+                      <div class="flex flex-wrap gap-1 pt-0.5">
+                        ${ex.tags.map(t => `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-medium">#${t}</span>`).join('')}
+                      </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                      ${isAdmin ? `
+                        <button data-admin-edit-exam="${ex.id}" class="px-2.5 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs">
+                          ✏️ Sửa Đề
+                        </button>
+                      ` : `<span class="text-[11px] font-semibold text-rose-600">🔒 90p không dừng</span>`}
+
+                      ${unlockInfo.unlocked ? `
+                        <button data-start-exam="${ex.id}" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs shadow-sm transition">
+                          🚀 Bắt Đầu Làm Bài Thi
+                        </button>
+                      ` : `
+                        <button data-locked-level="${ex.level}" class="px-3.5 py-2 rounded-xl bg-slate-200 text-slate-600 font-bold text-xs cursor-not-allowed">
+                          🔒 Chưa Đủ ĐK Mở Khóa
+                        </button>
+                      `}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    };
+
+    // Hook into submitExam so unique exam completion is saved to current user's account!
+    const _origSubmitExam = submitExam;
+    submitExam = function() {
+      const wasSubmitted = appState.isSubmitted;
+      _origSubmitExam();
+      if (!wasSubmitted && appState.isSubmitted) {
+        const acc = getCurrentAccount();
+        if (acc && appState.examHistory.length > 0) {
+          const latest = appState.examHistory[0];
+          if (!acc.uniqueExamsDone) acc.uniqueExamsDone = {};
+          const prevBest = acc.uniqueExamsDone[appState.activeExamId] ?? -1;
+          acc.uniqueExamsDone[appState.activeExamId] = Math.max(prevBest, latest.score);
+          saveAuthStore();
+          renderProgressionBanners();
+        }
+      }
+    };
+
+    // ------------------------------------------------------------------------
+    // ADMIN DASHBOARD RENDERER (ACCOUNTS INSPECTOR, ACTIVATION CODES, EXAM MANAGER)
+    // ------------------------------------------------------------------------
+    function renderAdminDashboard() {
+      if (!isCurrentUserAdmin()) return;
+
+      document.getElementById('adminKpiTotalUsers').textContent = String(authStore.accounts.length);
+      document.getElementById('adminKpiActivatedUsers').textContent = String(authStore.accounts.filter(a => a.isActivated).length);
+      document.getElementById('adminKpiTotalCodes').textContent = String(authStore.codes.length);
+      document.getElementById('adminKpiTotalExams').textContent = String(EXAM_CATALOG.length);
+
+      // 1. Accounts Table
+      const accTbody = document.getElementById('adminAccountsTableBody');
+      if (accTbody) {
+        accTbody.innerHTML = authStore.accounts.map(u => {
+          const uniqueExamCount = Object.keys(u.uniqueExamsDone || {}).length;
+          const hist = u.examHistory || [];
+          const avgScore = hist.length > 0 ? (hist.reduce((s, h) => s + h.score, 0) / hist.length).toFixed(2) : '--';
+          const bestScore = hist.length > 0 ? Math.max(...hist.map(h => h.score)).toFixed(2) : '--';
+          const topicGate = getAllTopicsGateSummary(u);
+          const isInspected = u.username === authStore.inspectedUsername;
+
+          return `
+            <tr class="${isInspected ? 'bg-indigo-50/70' : 'hover:bg-slate-50'}">
+              <td class="py-3 px-3 font-mono font-extrabold text-indigo-900">
+                ${u.username}
+                ${u.role === 'admin' ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px]">ADMIN</span>` : ''}
+              </td>
+              <td class="py-3 px-3 font-mono text-slate-600">${u.password}</td>
+              <td class="py-3 px-3 font-semibold text-slate-800">${u.fullName || u.username}</td>
+              <td class="py-3 px-3">
+                ${u.isActivated
+                  ? `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px]">✓ Đã KH (${u.activationCodeUsed || 'Admin'})</span>`
+                  : `<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[11px]">🔒 Chưa kích hoạt</span>`}
+              </td>
+              <td class="py-3 px-3 font-bold text-slate-800">${uniqueExamCount} / ${EXAM_CATALOG.length} đề (${hist.length} lượt nộp)</td>
+              <td class="py-3 px-3 font-bold text-indigo-700">TB: ${avgScore} • Cao: ${bestScore}</td>
+              <td class="py-3 px-3 font-bold ${topicGate.allPassed ? 'text-emerald-700' : 'text-amber-700'}">${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề</td>
+              <td class="py-3 px-3 text-right space-x-1 whitespace-nowrap">
+                <button data-admin-inspect="${u.username}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs">
+                  🔍 Xem Phân Tích
+                </button>
+                ${u.role !== 'admin' ? `
+                  <button data-admin-toggle-act="${u.username}" class="px-2.5 py-1 rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs">
+                    ${u.isActivated ? 'Khóa TK' : '🔓 Kích hoạt'}
+                  </button>
+                  <button data-admin-grant-unlock="${u.username}" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-xs" title="Cấp đủ 60% đề Lv1 & 20% chuyên đề để mở khóa Lv2">
+                    ⚡ Mở Lv2
+                  </button>
+                ` : ''}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 2. Detailed Student Inspector Panel
+      renderAdminStudentInspector();
+
+      // 3. Activation Codes Table
+      const codeTbody = document.getElementById('adminCodesTableBody');
+      if (codeTbody) {
+        codeTbody.innerHTML = authStore.codes.map((c, cIdx) => `
+          <tr class="hover:bg-slate-50">
+            <td class="py-2.5 px-3 font-mono font-extrabold text-indigo-700">${c.code}</td>
+            <td class="py-2.5 px-3 text-slate-600">${c.note || ''}</td>
+            <td class="py-2.5 px-3 font-bold">${(c.usedBy || []).length} / ${c.maxUses}</td>
+            <td class="py-2.5 px-3 text-xs text-slate-500">${(c.usedBy || []).length > 0 ? c.usedBy.join(', ') : 'Chưa có'}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button data-admin-del-code="${cIdx}" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs">Xóa mã</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 4. Admin Exams Table
+      const exTbody = document.getElementById('adminExamsListTableBody');
+      if (exTbody) {
+        exTbody.innerHTML = EXAM_CATALOG.map(ex => `
+          <tr class="hover:bg-slate-50">
+            <td class="py-2 px-3 font-extrabold text-indigo-700">${ex.code}</td>
+            <td class="py-2 px-3 font-bold">Level ${ex.level}</td>
+            <td class="py-2 px-3 font-semibold text-slate-800">${ex.school}</td>
+            <td class="py-2 px-3">${ex.year}</td>
+            <td class="py-2 px-3 text-right space-x-1">
+              <button data-admin-edit-exam="${ex.id}" class="px-2.5 py-1 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs">✏️ Sửa</button>
+              <button data-start-exam="${ex.id}" class="px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs">Vào đề</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function renderAdminStudentInspector() {
+      const panel = document.getElementById('adminStudentDetailPanel');
+      if (!panel) return;
+      const targetUser = authStore.accounts.find(a => a.username === authStore.inspectedUsername) || authStore.accounts[0];
+      if (!targetUser) return;
+
+      const hist = targetUser.examHistory || [];
+      const topicGate = getAllTopicsGateSummary(targetUser);
+      const lvStats = [1, 2, 3, 4, 5].map(lv => ({ lv, ...getLevelExamStatsForUser(targetUser, lv) }));
+
+      // Compute average % per Part (Bài I -> Bài V) for this student
+      const partMax = { 1: 1.5, 2: 1.5, 3: 2.5, 4: 4.0, 5: 0.5 };
+      const partNames = ['Bài I (Thống kê - XS)', 'Bài II (Căn thức A, B)', 'Bài III (Thực tế & Vi-ét)', 'Bài IV (Khối & Đường tròn)', 'Bài V (Câu chặn 10)'];
+      const partAnalysis = [1, 2, 3, 4, 5].map(p => {
+        if (hist.length === 0) return { name: partNames[p - 1], avg: 0, max: partMax[p], pct: 0 };
+        const avg = hist.reduce((s, h) => s + ((h.partScores && h.partScores[p]) || 0), 0) / hist.length;
+        return { name: partNames[p - 1], avg: Number(avg.toFixed(2)), max: partMax[p], pct: Math.round((avg / partMax[p]) * 100) };
+      });
+
+      panel.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+          <div>
+            <span class="px-2.5 py-0.5 rounded bg-indigo-600 text-white font-extrabold text-xs">BÁO CÁO PHÂN TÍCH CHI TIẾT TÀI KHOẢN</span>
+            <h4 class="text-lg font-extrabold text-slate-900 mt-1">
+              Học sinh: <span class="text-indigo-600">${targetUser.fullName}</span> (Username: <code class="font-mono">${targetUser.username}</code> • Mật khẩu: <code class="font-mono">${targetUser.password}</code>)
+            </h4>
+          </div>
+          <div class="text-xs font-bold text-slate-500">
+            Tổng số lượt nộp đề: <strong class="text-slate-900">${hist.length}</strong> • Số đề duy nhất đã làm: <strong class="text-indigo-600">${Object.keys(targetUser.uniqueExamsDone || {}).length}/${EXAM_CATALOG.length}</strong>
+          </div>
+        </div>
+
+        <!-- Level Completion Breakdown -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          ${lvStats.map(st => `
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+              <div class="font-extrabold text-slate-700">Level ${st.lv}</div>
+              <div class="text-base font-extrabold text-indigo-600 mt-0.5">${st.uniqueDone}/${st.totalExams} đề (${st.pct}%)</div>
+              <div class="text-[11px] ${st.passed60 ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${st.passed60 ? '✓ Đạt ≥60%' : 'Chưa đủ 60%'}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- 5-Part Exam Skill Breakdown & Topic Progress -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="space-y-2">
+            <div class="text-xs font-extrabold uppercase text-slate-600">📊 Phân Tích Điểm Trung Bình Theo 5 Bài Cấu Trúc Đề Hà Nội:</div>
+            <div class="space-y-2">
+              ${partAnalysis.map(pa => `
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <div class="flex justify-between text-xs font-bold mb-1">
+                    <span>${pa.name}</span>
+                    <span class="text-indigo-700">${pa.avg} / ${pa.max}đ (${pa.pct}%)</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div class="h-full bg-indigo-600" style="width: ${pa.pct}%"></div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-extrabold uppercase text-slate-600">📚 Tiến Độ Câu Hỏi Duy Nhất Ở 10 Chuyên Đề (Chuẩn ≥20%):</div>
+            <div class="grid grid-cols-2 gap-2">
+              ${topicGate.details.map(d => `
+                <div class="p-2 rounded-lg border ${d.passed ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200'} text-xs flex items-center justify-between">
+                  <span class="font-semibold truncate mr-1">${d.code.replace(' (CHỦ ĐỀ BỔ TRỢ)', '')}:</span>
+                  <span class="font-mono font-bold ${d.passed ? 'text-emerald-700' : 'text-rose-600'}">${d.uniqueCount}/${d.totalInTopic} (${d.pct}%)</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam Submissions History of this Account -->
+        <div class="space-y-2">
+          <div class="text-xs font-extrabold uppercase text-slate-600">📝 Danh Sách Các Đề Đã Làm Của Tài Khoản "${targetUser.username}":</div>
+          ${hist.length === 0 ? `<div class="p-4 rounded-xl bg-slate-50 text-center text-xs text-slate-400">Tài khoản này chưa nộp đề thi thử nào.</div>` : `
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-slate-100 font-bold">
+                  <tr>
+                    <th class="py-2 px-3 border-b">Thời gian nộp</th>
+                    <th class="py-2 px-3 border-b">Đề thi đã làm</th>
+                    <th class="py-2 px-3 border-b">Số câu đúng</th>
+                    <th class="py-2 px-3 border-b">Điểm từng bài (I → V)</th>
+                    <th class="py-2 px-3 border-b">Tổng điểm</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${hist.map(h => `
+                    <tr>
+                      <td class="py-2 px-3 font-mono text-slate-500">${h.date}</td>
+                      <td class="py-2 px-3 font-bold text-slate-900">${h.examTitle}</td>
+                      <td class="py-2 px-3">${h.correctCount}/${h.totalQuestions} câu</td>
+                      <td class="py-2 px-3 font-mono text-[11px]">
+                        I:${h.partScores?.[1] ?? 0} | II:${h.partScores?.[2] ?? 0} | III:${h.partScores?.[3] ?? 0} | IV:${h.partScores?.[4] ?? 0} | V:${h.partScores?.[5] ?? 0}
+                      </td>
+                      <td class="py-2 px-3 font-extrabold text-emerald-700">${h.score.toFixed(2)} / 10</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function bindAuthAndAdminEvents() {
+      // Open/Close Auth Modal
+      document.getElementById('openAuthModalBtn')?.addEventListener('click', () => {
+        document.getElementById('authModalBackdrop')?.classList.remove('hidden');
+      });
+      document.getElementById('closeAuthModalBtn')?.addEventListener('click', () => {
+        document.getElementById('authModalBackdrop')?.classList.add('hidden');
+      });
+      document.getElementById('adminCreateUserQuickBtn')?.addEventListener('click', () => {
+        document.getElementById('authModalBackdrop')?.classList.remove('hidden');
+        document.getElementById('tabAuthRegisterBtn')?.click();
+      });
+
+      // Switch Login / Register tabs in modal
+      document.getElementById('tabAuthLoginBtn')?.addEventListener('click', (e) => {
+        e.currentTarget.className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white';
+        document.getElementById('tabAuthRegisterBtn').className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200';
+        document.getElementById('authLoginForm')?.classList.remove('hidden');
+        document.getElementById('authRegisterForm')?.classList.add('hidden');
+      });
+      document.getElementById('tabAuthRegisterBtn')?.addEventListener('click', (e) => {
+        e.currentTarget.className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white';
+        document.getElementById('tabAuthLoginBtn').className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200';
+        document.getElementById('authRegisterForm')?.classList.remove('hidden');
+        document.getElementById('authLoginForm')?.classList.add('hidden');
+      });
+
+      // Login submission
+      document.getElementById('submitLoginBtn')?.addEventListener('click', () => {
+        const u = (document.getElementById('loginUsernameInput')?.value || '').trim();
+        const p = (document.getElementById('loginPasswordInput')?.value || '').trim();
+        const found = authStore.accounts.find(a => a.username === u && a.password === p);
+        if (!found) {
+          showToast('Sai tên tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại.', 'warning');
+          return;
+        }
+        authStore.currentUsername = found.username;
+        syncCurrentUserToAppState();
+        saveAuthStore();
+        document.getElementById('authModalBackdrop')?.classList.add('hidden');
+        setExamRoomStage('lobby');
+        setTopicRoomStage('lobby');
+        refreshAuthAndRoleUI();
+        if (found.role === 'admin') {
+          showToast('👑 Đã đăng nhập tài khoản Admin (duytam939) với toàn quyền hệ thống!', 'success');
+        } else {
+          showToast(`Đã đăng nhập tài khoản học sinh: ${found.username}`, 'success');
+        }
+      });
+
+      // Register submission
+      document.getElementById('submitRegisterBtn')?.addEventListener('click', () => {
+        const u = (document.getElementById('regUsernameInput')?.value || '').trim();
+        const p = (document.getElementById('regPasswordInput')?.value || '').trim();
+        const fn = (document.getElementById('regFullNameInput')?.value || '').trim() || u;
+        const codeStr = (document.getElementById('regActivationCodeInput')?.value || '').trim().toUpperCase();
+
+        if (!u || !p) {
+          showToast('Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!', 'warning');
+          return;
+        }
+        if (authStore.accounts.some(a => a.username.toLowerCase() === u.toLowerCase())) {
+          showToast('Tên tài khoản này đã tồn tại! Hãy chọn tên khác.', 'warning');
+          return;
+        }
+
+        let activated = false;
+        let usedCode = null;
+        if (codeStr) {
+          const cObj = authStore.codes.find(c => c.code.toUpperCase() === codeStr);
+          if (cObj && (cObj.usedBy || []).length < cObj.maxUses) {
+            activated = true;
+            usedCode = cObj.code;
+            if (!cObj.usedBy.includes(u)) cObj.usedBy.push(u);
+          } else {
+            showToast('Mã kích hoạt đính kèm không hợp lệ hoặc đã hết lượt! Tài khoản vẫn được tạo ở trạng thái chờ kích hoạt.', 'warning');
+          }
+        }
+
+        const newAcc = {
+          username: u,
+          password: p,
+          role: 'student',
+          fullName: fn,
+          isActivated: activated,
+          activationCodeUsed: usedCode,
+          examHistory: [],
+          uniqueExamsDone: {},
+          uniqueSolvedTopicQuestions: createInitialSolvedMap(false)
+        };
+        authStore.accounts.push(newAcc);
+        authStore.currentUsername = u;
+        syncCurrentUserToAppState();
+        saveAuthStore();
+        document.getElementById('authModalBackdrop')?.classList.add('hidden');
+        setExamRoomStage('lobby');
+        setTopicRoomStage('lobby');
+        refreshAuthAndRoleUI();
+        showToast(activated ? `🎉 Tạo tài khoản ${u} & kích hoạt mã thành công!` : `Tạo tài khoản ${u} thành công! Hãy nhập Mã Kích Hoạt để mở khóa phòng luyện.`, 'success');
+      });
+
+      // Student Activation Code Gate Submit
+      document.getElementById('submitActivationCodeBtn')?.addEventListener('click', () => {
+        const inp = (document.getElementById('studentActivationCodeInput')?.value || '').trim().toUpperCase();
+        if (!inp) {
+          showToast('Vui lòng nhập Mã Kích Hoạt!', 'warning');
+          return;
+        }
+        const acc = getCurrentAccount();
+        const codeObj = authStore.codes.find(c => c.code.toUpperCase() === inp);
+        if (!codeObj) {
+          showToast('Mã kích hoạt không tồn tại! Hãy liên hệ Admin (duytam939) hoặc dùng mã mẫu HN10-VIP2026.', 'warning');
+          return;
+        }
+        if ((codeObj.usedBy || []).length >= codeObj.maxUses && !codeObj.usedBy.includes(acc.username)) {
+          showToast('Mã kích hoạt này đã hết lượt sử dụng!', 'warning');
+          return;
+        }
+        acc.isActivated = true;
+        acc.activationCodeUsed = codeObj.code;
+        if (!codeObj.usedBy) codeObj.usedBy = [];
+        if (!codeObj.usedBy.includes(acc.username)) codeObj.usedBy.push(acc.username);
+        saveAuthStore();
+        refreshAuthAndRoleUI();
+        showToast(`🔓 Kích hoạt thành công mã ${codeObj.code}! Đã mở khóa Phòng Thi (Level 1) & Phòng Chuyên Đề!`, 'success');
+      });
+
+      document.getElementById('jumpToActivateFromTopicBtn')?.addEventListener('click', () => {
+        switchView('exam-room');
+      });
+
+      // Admin Sub-panel tabs
+      document.querySelectorAll('.admin-sub-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sub = btn.getAttribute('data-admin-sub');
+          document.querySelectorAll('.admin-sub-btn').forEach(b => {
+            b.className = b === btn
+              ? 'admin-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-400 text-slate-950 transition'
+              : 'admin-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition';
+          });
+          document.getElementById('adminSubAccounts')?.classList.toggle('hidden', sub !== 'accounts');
+          document.getElementById('adminSubCodes')?.classList.toggle('hidden', sub !== 'codes');
+          document.getElementById('adminSubExams')?.classList.toggle('hidden', sub !== 'exams');
+        });
+      });
+
+      // Admin shortcut to Exam Editor
+      document.getElementById('adminOpenExamEditorBtn')?.addEventListener('click', () => {
+        switchView('admin-panel');
+        document.querySelector('[data-admin-sub="exams"]')?.click();
+      });
+
+      // Admin Generate Random Code
+      document.getElementById('randomCodeGenBtn')?.addEventListener('click', () => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let suffix = '';
+        for (let i = 0; i < 6; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+        document.getElementById('newCodeStringInput').value = `HN10-2027-${suffix}`;
+      });
+
+      // Admin Create Activation Code
+      document.getElementById('createActivationCodeBtn')?.addEventListener('click', () => {
+        if (!isCurrentUserAdmin()) return;
+        const codeVal = (document.getElementById('newCodeStringInput')?.value || '').trim().toUpperCase();
+        const maxU = parseInt(document.getElementById('newCodeMaxUsesSelect')?.value || '30', 10);
+        const noteVal = (document.getElementById('newCodeNoteInput')?.value || '').trim() || 'Mã phát hành bởi Admin duytam939';
+        if (!codeVal) {
+          showToast('Vui lòng nhập chuỗi Mã Kích Hoạt!', 'warning');
+          return;
+        }
+        if (authStore.codes.some(c => c.code.toUpperCase() === codeVal)) {
+          showToast('Mã kích hoạt này đã tồn tại!', 'warning');
+          return;
+        }
+        authStore.codes.unshift({
+          code: codeVal,
+          note: noteVal,
+          maxUses: maxU,
+          usedBy: [],
+          createdAt: new Date().toLocaleDateString('vi-VN')
+        });
+        saveAuthStore();
+        renderAdminDashboard();
+        showToast(`🔑 Đã tạo mã kích hoạt mới: ${codeVal}`, 'success');
+      });
+
+      // Admin Add / Edit Exam Save
+      document.getElementById('adminSaveExamBtn')?.addEventListener('click', () => {
+        if (!isCurrentUserAdmin()) return;
+        const editId = document.getElementById('editExamIdHidden')?.value || '';
+        const codeVal = (document.getElementById('adminExamCodeInput')?.value || 'ĐỀ MỚI').trim();
+        const lvVal = parseInt(document.getElementById('adminExamLevelSelect')?.value || '3', 10);
+        const yrVal = document.getElementById('adminExamYearSelect')?.value || '2026';
+        const srcVal = document.getElementById('adminExamSourceSelect')?.value || 'truong-top';
+        const schVal = (document.getElementById('adminExamSchoolInput')?.value || 'Trường THCS Hà Nội').trim();
+        const titVal = (document.getElementById('adminExamTitleInput')?.value || 'Đề Thi Thử Vào Lớp 10 THPT Hà Nội').trim();
+
+        if (editId) {
+          const ex = EXAM_CATALOG.find(e => e.id === editId);
+          if (ex) {
+            ex.code = codeVal;
+            ex.level = lvVal;
+            ex.year = yrVal;
+            ex.sourceType = srcVal;
+            ex.school = schVal;
+            ex.title = titVal;
+            showToast(`✏️ Đã cập nhật thông tin ${codeVal} (${schVal})!`, 'success');
+          }
+        } else {
+          const newId = 'de-custom-' + Date.now();
+          EXAM_CATALOG.push({
+            id: newId,
+            code: codeVal,
+            level: lvVal,
+            year: yrVal,
+            sourceType: srcVal,
+            school: schVal,
+            title: titVal,
+            duration: 90,
+            tags: [`Level ${lvVal}`, schVal, 'Đề Admin Tạo'],
+            seeds: {} // Uses fresh algorithmic parameters
+          });
+          showToast(`➕ Đã thêm đề mới ${codeVal} (Level ${lvVal}) vào kho đề!`, 'success');
+        }
+        document.getElementById('editExamIdHidden').value = '';
+        document.getElementById('adminExamFormTitle').textContent = '➕ Thêm Đề Thi Mới / Sửa Đề Thi';
+        renderExamCatalog();
+        renderAdminDashboard();
+      });
+
+      document.getElementById('adminResetExamFormBtn')?.addEventListener('click', () => {
+        document.getElementById('editExamIdHidden').value = '';
+        document.getElementById('adminExamFormTitle').textContent = '➕ Thêm Đề Thi Mới / Sửa Đề Thi';
+        document.getElementById('adminExamCodeInput').value = `ĐỀ SỐ ${EXAM_CATALOG.length + 1}`;
+        document.getElementById('adminExamSchoolInput').value = '';
+        document.getElementById('adminExamTitleInput').value = '';
+      });
+
+      // Delegated clicks for Quick Login, Admin Actions, Locked Level Alert
+      document.body.addEventListener('click', (e) => {
+        const qLogin = e.target.closest('[data-quick-login]');
+        if (qLogin) {
+          const uname = qLogin.getAttribute('data-quick-login');
+          const found = authStore.accounts.find(a => a.username === uname);
+          if (found) {
+            authStore.currentUsername = found.username;
+            syncCurrentUserToAppState();
+            saveAuthStore();
+            document.getElementById('authModalBackdrop')?.classList.add('hidden');
+            setExamRoomStage('lobby');
+            setTopicRoomStage('lobby');
+            refreshAuthAndRoleUI();
+            showToast(`Đã chuyển sang tài khoản: ${found.username}`, 'success');
+          }
+          return;
+        }
+
+        const lockedBtn = e.target.closest('[data-locked-level]');
+        if (lockedBtn) {
+          const lv = parseInt(lockedBtn.getAttribute('data-locked-level'), 10);
+          const unlockInfo = isExamLevelUnlockedForUser(getCurrentAccount(), lv);
+          showToast(`🔒 Chưa mở khóa Level ${lv}: ${unlockInfo.reason}`, 'warning');
+          return;
+        }
+
+        const navJump = e.target.closest('[data-nav-jump]');
+        if (navJump) {
+          switchView(navJump.getAttribute('data-nav-jump'));
+          return;
+        }
+
+        const inspectBtn = e.target.closest('[data-admin-inspect]');
+        if (inspectBtn) {
+          authStore.inspectedUsername = inspectBtn.getAttribute('data-admin-inspect');
+          renderAdminDashboard();
+          document.getElementById('adminStudentDetailPanel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        const toggleActBtn = e.target.closest('[data-admin-toggle-act]');
+        if (toggleActBtn && isCurrentUserAdmin()) {
+          const uname = toggleActBtn.getAttribute('data-admin-toggle-act');
+          const u = authStore.accounts.find(a => a.username === uname);
+          if (u && u.role !== 'admin') {
+            u.isActivated = !u.isActivated;
+            if (u.isActivated && !u.activationCodeUsed) u.activationCodeUsed = 'ADMIN-DIRECT';
+            saveAuthStore();
+            renderAdminDashboard();
+            showToast(`Đã ${u.isActivated ? 'kích hoạt' : 'khóa'} tài khoản ${u.username}!`, 'info');
+          }
+          return;
+        }
+
+        const grantUnlockBtn = e.target.closest('[data-admin-grant-unlock]');
+        if (grantUnlockBtn && isCurrentUserAdmin()) {
+          const uname = grantUnlockBtn.getAttribute('data-admin-grant-unlock');
+          const u = authStore.accounts.find(a => a.username === uname);
+          if (u) {
+            u.isActivated = true;
+            u.uniqueExamsDone = { ...u.uniqueExamsDone, 'de-01': 8.5, 'de-02': 8.25, 'de-03': 8.75 };
+            u.uniqueSolvedTopicQuestions = createInitialSolvedMap(true);
+            saveAuthStore();
+            renderAdminDashboard();
+            showToast(`⚡ Đã cấp đủ 3/5 đề Level 1 (60%) & ≥20% câu ở 9 chuyên đề cho tài khoản ${u.username}!`, 'success');
+          }
+          return;
+        }
+
+        const delCodeBtn = e.target.closest('[data-admin-del-code]');
+        if (delCodeBtn && isCurrentUserAdmin()) {
+          const cIdx = parseInt(delCodeBtn.getAttribute('data-admin-del-code'), 10);
+          authStore.codes.splice(cIdx, 1);
+          saveAuthStore();
+          renderAdminDashboard();
+          showToast('Đã xóa mã kích hoạt.', 'info');
+          return;
+        }
+
+        const editExBtn = e.target.closest('[data-admin-edit-exam]');
+        if (editExBtn && isCurrentUserAdmin()) {
+          const exId = editExBtn.getAttribute('data-admin-edit-exam');
+          const ex = EXAM_CATALOG.find(item => item.id === exId);
+          if (ex) {
+            switchView('admin-panel');
+            document.querySelector('[data-admin-sub="exams"]')?.click();
+            document.getElementById('editExamIdHidden').value = ex.id;
+            document.getElementById('adminExamFormTitle').textContent = `✏️ Đang Sửa ${ex.code}`;
+            document.getElementById('adminExamCodeInput').value = ex.code;
+            document.getElementById('adminExamLevelSelect').value = String(ex.level);
+            document.getElementById('adminExamYearSelect').value = ex.year;
+            document.getElementById('adminExamSourceSelect').value = ex.sourceType;
+            document.getElementById('adminExamSchoolInput').value = ex.school;
+            document.getElementById('adminExamTitleInput').value = ex.title;
+            showToast(`Đang nạp thông tin ${ex.code} vào biểu mẫu chỉnh sửa!`, 'info');
+          }
+          return;
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAuthStore();
+      bindGlobalEvents();
+      bindAuthAndAdminEvents();
       setExamRoomStage('lobby');
       setTopicRoomStage('lobby');
+      refreshAuthAndRoleUI();
       renderMathInContainer(document.body);
     });
   </script>

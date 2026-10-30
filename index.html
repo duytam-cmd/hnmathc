@@ -25,64 +25,113 @@
     }
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
-    .katex { font-size: 1.05em !important; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f6f9ff;
+      background-image:
+        radial-gradient(at 12% 8%, rgba(56, 189, 248, 0.13) 0px, transparent 45%),
+        radial-gradient(at 88% 12%, rgba(99, 102, 241, 0.12) 0px, transparent 45%),
+        radial-gradient(at 50% 90%, rgba(251, 191, 36, 0.10) 0px, transparent 50%),
+        linear-gradient(to right, rgba(79, 70, 229, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(79, 70, 229, 0.05) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+      background-attachment: fixed;
+      color: #0f172a;
+    }
+    .katex { font-size: 1.06em !important; }
     .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    .option-card { transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
-    .option-card:hover { transform: translateY(-1px); }
+    .custom-scroll::-webkit-scrollbar-track { background: #eef2ff; border-radius: 8px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 8px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+    .option-card { transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1); }
+    .option-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.12); }
+    .math-hero-banner {
+      background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 52%, #fef3c7 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .math-card-glow {
+      box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.08), 0 4px 12px -2px rgba(14, 165, 233, 0.05);
+    }
+    .math-level-header {
+      background: linear-gradient(90deg, #4338ca 0%, #2563eb 55%, #0284c7 100%);
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-indigo-600 selection:text-white">
+<body class="min-h-screen flex flex-col text-slate-900 selection:bg-indigo-600 selection:text-white relative">
+  <!-- Decorative Mathematical Symbols & Geometric Blueprint Watermark (Fixed Background) -->
+  <div class="pointer-events-none fixed inset-0 overflow-hidden z-0 opacity-40 select-none" aria-hidden="true">
+    <svg class="absolute -top-10 -right-10 w-96 h-96 text-indigo-200/70" viewBox="0 0 200 200" fill="none">
+      <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle cx="100" cy="100" r="55" stroke="currentColor" stroke-width="1.2"/>
+      <polygon points="100,20 35,145 165,145" stroke="currentColor" stroke-width="1.5" fill="rgba(99,102,241,0.03)"/>
+      <line x1="100" y1="20" x2="100" y2="145" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+    </svg>
+    <svg class="absolute bottom-6 -left-12 w-80 h-80 text-sky-200/70" viewBox="0 0 200 200" fill="none">
+      <line x1="10" y1="150" x2="190" y2="150" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="100" y1="10" x2="100" y2="190" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M 30 30 Q 100 250 170 30" stroke="currentColor" stroke-width="2" fill="none"/>
+      <line x1="20" y1="120" x2="180" y2="60" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 4"/>
+    </svg>
+    <div class="hidden lg:block absolute top-28 left-8 font-serif italic text-3xl font-bold text-indigo-300/40">∑ x₁x₂ = c/a</div>
+    <div class="hidden lg:block absolute bottom-24 right-12 font-serif italic text-3xl font-bold text-sky-300/40">Δ = b² − 4ac</div>
+    <div class="hidden lg:block absolute top-1/2 right-8 font-serif italic text-2xl font-bold text-amber-400/30">P = A · B ∈ ℤ</div>
+  </div>
 
-  <!-- TOP NAVIGATION BAR -->
-  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-15 py-2.5 flex items-center justify-between gap-3">
+  <!-- TOP NAVIGATION BAR (BRIGHT MATHEMATICAL GLASS THEME) -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-indigo-100 text-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 py-2.5 flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5 cursor-pointer" id="brandLogoBtn">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-indigo-600 flex items-center justify-center font-extrabold text-slate-950 text-base shadow">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-sky-500 flex items-center justify-center font-extrabold text-white text-base shadow-md shadow-indigo-500/25 ring-2 ring-indigo-100">
           ∑10
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-extrabold tracking-tight text-base text-white">HanoiMath <span class="text-amber-400">10 Pro</span></span>
-            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">25 Đề Theo Level Tăng Dần • 795 Câu Chuyên Đề</span>
+            <span class="font-extrabold tracking-tight text-base sm:text-lg text-indigo-950">HanoiMath <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-amber-500">10 Pro</span></span>
+            <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">π • √x • Δ • Đường Tròn (O;R)</span>
           </div>
+          
         </div>
       </div>
 
       <!-- Navigation Tabs -->
       <nav class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto py-0.5">
-        <button data-nav="exam-room" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+        <button data-nav="exam-room" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 whitespace-nowrap">
           <span>✍️</span> <span>Phòng Thi</span>
-          <span id="activeExamBadge" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span id="activeExamBadge" class="w-2 h-2 rounded-full bg-emerald-300"></span>
         </button>
-        <button data-nav="topic-room" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+        <button data-nav="topic-room" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1.5 whitespace-nowrap">
           <span>📚</span> <span>Phòng Chuyên Đề (795 Câu)</span>
         </button>
-        <button data-nav="algo-generator" class="nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+        <button data-nav="algo-generator" class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1.5 whitespace-nowrap">
           <span>⚡</span> <span>Thuật Toán Sinh Đề</span>
         </button>
-        <button data-nav="math-lab" class="nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+        <button data-nav="math-lab" class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1.5 whitespace-nowrap">
           <span>🔬</span> <span>Phân Tích Toán Học</span>
         </button>
-        <button data-nav="analytics" class="nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+        <button data-nav="analytics" class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1.5 whitespace-nowrap">
           <span>📊</span> <span>Thống Kê Năng Lực</span>
         </button>
-        <button id="navAdminTabBtn" data-nav="admin-panel" class="nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-amber-400/20 text-amber-300 border border-amber-400/40 hover:bg-amber-400 hover:text-slate-950 flex items-center gap-1.5 whitespace-nowrap">
+        <button id="navAdminTabBtn" data-nav="admin-panel" class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-400 hover:text-slate-950 flex items-center gap-1.5 whitespace-nowrap">
           <span>👑</span> <span>Quản Trị Admin</span>
         </button>
       </nav>
 
-      <!-- User Account Status & Auth Trigger -->
-      <div class="flex items-center gap-2 shrink-0">
-        <div id="headerUserBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs">
-          <span id="headerUserRoleIcon">👑</span>
-          <span id="headerUsernameText" class="font-extrabold text-amber-300">duytam939</span>
-          <span id="headerActivationTag" class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">ADMIN</span>
+      <!-- Real-Time Clock, Dedicated Activation Button & User Account Status -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div class="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-800" title="Thời gian thực hệ thống">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span id="headerRealtimeClock">--/--/---- --:--:--</span>
         </div>
-        <button id="openAuthModalBtn" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1 shadow-sm">
+        <button id="openDedicatedActivateBtn" class="px-2.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs transition flex items-center gap-1 shadow-sm" title="Mở phần nhập Mã Kích Hoạt riêng">
+          <span>🔑</span> <span class="hidden md:inline">Nhập Mã Kích Hoạt</span>
+        </button>
+        <div id="headerUserBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs">
+          <span id="headerUserRoleIcon">👑</span>
+          <span id="headerUsernameText" class="font-extrabold text-indigo-900">duytam939</span>
+          <span id="headerActivationTag" class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">ADMIN</span>
+        </div>
+        <button id="openAuthModalBtn" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition flex items-center gap-1 shadow-sm">
           <span>👤</span> <span id="authBtnLabel">Tài Khoản / Đổi TK</span>
         </button>
       </div>
@@ -96,7 +145,7 @@
     <section id="view-exam-room" class="space-y-5">
 
       <!-- ACTIVATION CODE GATE OVERLAY (SHOWN TO UNACTIVATED NON-ADMIN ACCOUNTS) -->
-      <div id="examActivationGate" class="hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 sm:p-8 border border-amber-400/40 shadow-xl space-y-5">
+      <div id="examActivationGate" class="hidden math-hero-banner text-slate-900 rounded-2xl p-6 sm:p-8 border-2 border-amber-300 shadow-xl space-y-5">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div class="space-y-2 max-w-2xl">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-extrabold">
@@ -107,12 +156,12 @@
               Tài khoản <strong id="gateAccountName" class="text-amber-300">hocsinh</strong> chưa được kích hoạt. Vui lòng nhập Mã Kích Hoạt do Admin (<strong class="text-white">duytam939</strong>) cấp để mở khóa kho 25 Đề Thi Thử và 10 Chuyên Đề (795 câu hỏi).
             </p>
             <div class="text-xs text-indigo-300">
-              💡 <em>Mẹo kiểm thử nhanh:</em> Bạn có thể nhập mã mẫu <code class="px-2 py-0.5 rounded bg-slate-800 text-amber-300 font-mono font-bold">HN10-VIP2026</code> hoặc đăng nhập tài khoản Admin <code class="px-2 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono font-bold">duytam939</code> / <code class="px-2 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono font-bold">duytam939</code> để tự tạo mã kích hoạt mới!
+              💡 Vui lòng liên hệ Quản trị viên hệ thống để nhận Mã Kích Hoạt có hiệu lực theo thời gian thực cho tài khoản của bạn.
             </div>
           </div>
-          <div class="bg-slate-800/90 p-5 rounded-2xl border border-slate-700 w-full lg:w-96 space-y-3">
+          <div class="bg-white p-5 rounded-2xl border border-indigo-200 shadow-md w-full lg:w-96 space-y-3">
             <label class="block text-xs font-bold uppercase text-slate-300">Nhập Mã Kích Hoạt Của Bạn:</label>
-            <input id="studentActivationCodeInput" type="text" placeholder="VD: HN10-VIP2026" class="w-full px-4 py-2.5 rounded-xl border border-slate-600 bg-slate-900 text-amber-300 font-mono font-extrabold text-sm uppercase focus:outline-none focus:border-amber-400" />
+            <input id="studentActivationCodeInput" type="text" placeholder="Nhập mã kích hoạt..." class="w-full px-4 py-2.5 rounded-xl border-2 border-indigo-200 bg-indigo-50/40 text-indigo-950 font-mono font-extrabold text-sm uppercase focus:outline-none focus:border-indigo-600" />
             <button id="submitActivationCodeBtn" class="w-full py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
               🔓 Kích Hoạt Mở Khóa Ngay
             </button>
@@ -127,51 +176,59 @@
 
       <!-- STAGE 1A: EXAM SELECTION LOBBY (25 ĐỀ SẮP XẾP TĂNG DẦN THEO 5 CẤP ĐỘ) -->
       <div id="examLobbyPanel" class="space-y-5">
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 text-white space-y-4 shadow-md">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-            <div class="space-y-1">
+        <div class="math-hero-banner rounded-2xl border border-indigo-200/80 p-5 sm:p-6 text-slate-900 space-y-4 math-card-glow">
+          <!-- Decorative Math Formula & Geometric SVG Overlay -->
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+            <div class="space-y-1.5">
               <div class="flex flex-wrap items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold">25 ĐỀ TRƯỜNG / SỞ / QUẬN HÀ NỘI (2024–2027)</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">Sắp Xếp Độ Khó Tăng Dần (Level 1 → Level 5)</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-bold">⏱️ 90 Phút Không Dừng</span>
+                <span class="px-3 py-0.5 rounded-full bg-indigo-600 text-white text-xs font-extrabold shadow-sm">📐 25 ĐỀ TRƯỜNG / SỞ / QUẬN HÀ NỘI (2024–2027)</span>
+                <span class="px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold">📈 Độ Khó Tăng Dần (Level 1 → Level 5)</span>
+                <span class="px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold">⏱️ 90 Phút Không Dừng</span>
               </div>
-              <h1 class="text-xl sm:text-2xl font-extrabold">Sảnh Chọn Đề Thi Thử Vào Lớp 10 (Lộ Trình Tăng Dần 5 Cấp Độ)</h1>
+              <h1 class="text-xl sm:text-2xl font-extrabold text-indigo-950">Sảnh Chọn Đề Thi Thử Toán Vào Lớp 10 (Lộ Trình 5 Cấp Độ)</h1>
+              <div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-indigo-800/80 pt-0.5">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/80 border border-indigo-100">📊 Bài I: Thống kê & Xác suất</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/80 border border-indigo-100">√x Bài II: Căn thức A, B</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/80 border border-indigo-100">📈 Bài III: Hệ PT & Vi-ét</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/80 border border-indigo-100">⭕ Bài IV: Đường tròn (O;R)</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/80 border border-indigo-100">🏆 Bài V: Cực trị Điểm 10</span>
+              </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button id="adminOpenExamEditorBtn" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs transition flex items-center gap-1.5">
+              <button id="adminOpenExamEditorBtn" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
                 <span>➕</span> <span>Thêm / Sửa Đề Thi (Admin)</span>
               </button>
-              <button id="goToTopicRoomHeroBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
+              <button id="goToTopicRoomHeroBtn" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-500/20 transition">
                 📚 Sang Phòng Chuyên Đề (795 Câu) →
               </button>
             </div>
           </div>
 
           <!-- Level Filter Pills + Search/Dropdowns -->
-          <div class="pt-2 border-t border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div class="pt-3 border-t border-indigo-200/60 flex flex-col lg:flex-row lg:items-center justify-between gap-3 relative z-10">
             <div class="flex flex-wrap items-center gap-1.5" id="levelQuickFilterBar">
-              <button data-level-pill="all" class="level-pill-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 transition">Tất cả 25 Đề (Level 1 → 5)</button>
-              <button data-level-pill="1" class="level-pill-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Lv1: Cơ bản (Đề 01–05)</button>
-              <button data-level-pill="2" class="level-pill-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Lv2: Khá (Đề 06–10)</button>
-              <button data-level-pill="3" class="level-pill-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Lv3: Khá Giỏi (Đề 11–15)</button>
-              <button data-level-pill="4" class="level-pill-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Lv4: Giỏi Top (Đề 16–20)</button>
-              <button data-level-pill="5" class="level-pill-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Lv5: Đỉnh cao 9,5+ (Đề 21–25)</button>
+              <button data-level-pill="all" class="level-pill-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition">Tất cả 25 Đề (Level 1 → 5)</button>
+              <button data-level-pill="1" class="level-pill-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/90 text-slate-700 border border-indigo-200 hover:bg-indigo-50 transition">Lv1: Cơ bản (Đề 01–05)</button>
+              <button data-level-pill="2" class="level-pill-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/90 text-slate-700 border border-indigo-200 hover:bg-indigo-50 transition">Lv2: Khá (Đề 06–10)</button>
+              <button data-level-pill="3" class="level-pill-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/90 text-slate-700 border border-indigo-200 hover:bg-indigo-50 transition">Lv3: Khá Giỏi (Đề 11–15)</button>
+              <button data-level-pill="4" class="level-pill-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/90 text-slate-700 border border-indigo-200 hover:bg-indigo-50 transition">Lv4: Giỏi Top (Đề 16–20)</button>
+              <button data-level-pill="5" class="level-pill-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/90 text-slate-700 border border-indigo-200 hover:bg-indigo-50 transition">Lv5: Đỉnh cao 9,5+ (Đề 21–25)</button>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              <select id="filterYearSelect" class="px-2.5 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-xs font-semibold text-white focus:outline-none">
+              <select id="filterYearSelect" class="px-3 py-1.5 rounded-xl border border-indigo-200 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="all">Mọi năm (2024–2027)</option>
                 <option value="2027">Định hướng 2027</option>
                 <option value="2026">Năm 2026</option>
                 <option value="2025">Năm 2025</option>
                 <option value="2024">Năm 2024</option>
               </select>
-              <select id="filterSourceSelect" class="px-2.5 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-xs font-semibold text-white focus:outline-none">
+              <select id="filterSourceSelect" class="px-3 py-1.5 rounded-xl border border-indigo-200 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="all">Tất cả Trường / Sở / Quận</option>
                 <option value="so-hn">Sở GD&ĐT & Phòng GD Quận</option>
                 <option value="truong-top">Trường THCS Trọng Điểm / Chuyên</option>
               </select>
-              <input id="searchExamInput" type="text" placeholder="Tìm trường, quận, mã đề..." class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-xs text-white placeholder-slate-400 focus:outline-none w-48" />
+              <input id="searchExamInput" type="text" placeholder="Tìm trường, quận, mã đề..." class="px-3 py-1.5 rounded-xl border border-indigo-200 bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-48" />
             </div>
           </div>
         </div>
@@ -204,11 +261,11 @@
             </button>
 
             <!-- Unstoppable Countdown Timer -->
-            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white font-mono text-sm font-extrabold border border-slate-700" title="Thời gian phòng thi chạy liên tục, không thể tạm dừng">
+            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 text-indigo-950 font-mono text-sm font-extrabold border-2 border-indigo-200 shadow-sm" title="Thời gian phòng thi chạy liên tục, không thể tạm dừng">
               <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
               <span>⏱️</span>
               <span id="examTimerDisplay">90:00</span>
-              <span class="text-[10px] font-sans text-rose-300 font-semibold uppercase tracking-wider ml-1">Không dừng</span>
+              <span class="text-[10px] font-sans text-rose-600 font-extrabold uppercase tracking-wider ml-1">Không dừng</span>
             </div>
 
             <button id="submitExamBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition">
@@ -296,16 +353,16 @@
 
       <!-- STAGE 2A: TOPIC SELECTION LOBBY -->
       <div id="topicLobbyPanel" class="space-y-5">
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-md">
-          <div class="space-y-1">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold">
+        <div class="math-hero-banner rounded-2xl border border-indigo-200/80 p-5 sm:p-6 text-slate-900 flex flex-col lg:flex-row lg:items-center justify-between gap-4 math-card-glow">
+          <div class="space-y-1.5">
+            <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-xs font-extrabold shadow-sm">
               <span>📚 NGÂN HÀNG MỞ RỘNG GẤP 2,5 LẦN • 795 CÂU HỎI PHÂN LOẠI & 25 BÀI HÌNH LỚN</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold">Sảnh Chọn Chuyên Đề & Chủ Đề Nhỏ Thi Vào 10 Hà Nội</h2>
-            <p class="text-xs text-slate-300">Mỗi chuyên đề gồm <strong>80 câu hỏi phân hóa 4 cấp độ</strong> (riêng Hình học Đường tròn gồm <strong>25 Bài Hình Lớn = 75 câu hỏi chi tiết ý a, b, c</strong> lấy nguồn từ đề Sở HN và các trường Chuyên/Top đầu).</p>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-indigo-950">Sảnh Chọn Chuyên Đề & Chủ Đề Nhỏ Thi Vào 10 Hà Nội</h2>
+            <p class="text-xs sm:text-sm text-slate-700">Mỗi chuyên đề gồm <strong>80 câu hỏi phân hóa 4 cấp độ</strong> (riêng Hình học Đường tròn gồm <strong>25 Bài Hình Lớn = 75 câu hỏi chi tiết ý a, b, c</strong> lấy nguồn từ đề Sở HN và các trường Chuyên/Top đầu).</p>
           </div>
           <div class="flex items-center gap-2">
-            <input id="searchTopicLobbyInput" type="text" placeholder="Tìm chuyên đề (Căn, Vi-ét, Hình, Câu chặn 10...)" class="px-3.5 py-2 rounded-xl border border-slate-700 bg-slate-800 text-xs text-white placeholder-slate-400 focus:outline-none w-64" />
+            <input id="searchTopicLobbyInput" type="text" placeholder="Tìm chuyên đề (Căn, Vi-ét, Hình, Câu chặn 10...)" class="px-3.5 py-2.5 rounded-xl border border-indigo-200 bg-white text-xs text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64" />
           </div>
         </div>
 
@@ -557,7 +614,7 @@
 
     <!-- ==================== VIEW 6: ADMIN MANAGEMENT CENTER (DÀNH RIÊNG CHO ADMIN duytam939) ==================== -->
     <section id="view-admin-panel" class="hidden space-y-6">
-      <div class="bg-slate-900 text-white rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+      <div class="math-hero-banner text-slate-900 rounded-2xl p-6 border border-indigo-200 shadow-md space-y-4">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-extrabold">
@@ -583,21 +640,21 @@
 
         <!-- System-wide Admin KPIs -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
-          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="p-3.5 rounded-xl bg-white/90 border border-indigo-100 shadow-sm">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Tổng số tài khoản</div>
-            <div id="adminKpiTotalUsers" class="text-2xl font-extrabold text-white mt-0.5">3</div>
+            <div id="adminKpiTotalUsers" class="text-2xl font-extrabold text-indigo-950 mt-0.5">3</div>
           </div>
-          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="p-3.5 rounded-xl bg-white/90 border border-indigo-100 shadow-sm">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Tài khoản đã kích hoạt</div>
-            <div id="adminKpiActivatedUsers" class="text-2xl font-extrabold text-emerald-400 mt-0.5">2</div>
+            <div id="adminKpiActivatedUsers" class="text-2xl font-extrabold text-emerald-600 mt-0.5">2</div>
           </div>
-          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="p-3.5 rounded-xl bg-white/90 border border-indigo-100 shadow-sm">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Tổng số mã kích hoạt</div>
-            <div id="adminKpiTotalCodes" class="text-2xl font-extrabold text-amber-400 mt-0.5">4</div>
+            <div id="adminKpiTotalCodes" class="text-2xl font-extrabold text-amber-600 mt-0.5">4</div>
           </div>
-          <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="p-3.5 rounded-xl bg-white/90 border border-indigo-100 shadow-sm">
             <div class="text-[11px] font-bold text-slate-400 uppercase">Tổng số đề trong hệ thống</div>
-            <div id="adminKpiTotalExams" class="text-2xl font-extrabold text-indigo-400 mt-0.5">25</div>
+            <div id="adminKpiTotalExams" class="text-2xl font-extrabold text-indigo-600 mt-0.5">25</div>
           </div>
         </div>
       </div>
@@ -662,6 +719,25 @@
                 <option value="30" selected>30 tài khoản (Lớp học)</option>
                 <option value="999">Không giới hạn số lượt (999 lượt)</option>
               </select>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="sm:col-span-2 flex items-center justify-between">
+                <span class="text-[11px] font-extrabold text-indigo-700 uppercase">⏱️ Đặt Thời Gian Thực (Bắt Đầu & Hết Hạn):</span>
+                <div class="flex gap-1">
+                  <button type="button" data-quick-dur="1" class="px-2 py-0.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-[10px]">+1 ngày</button>
+                  <button type="button" data-quick-dur="7" class="px-2 py-0.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-[10px]">+7 ngày</button>
+                  <button type="button" data-quick-dur="30" class="px-2 py-0.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-[10px]">+30 ngày</button>
+                  <button type="button" data-quick-dur="365" class="px-2 py-0.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-[10px]">+1 năm</button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Thời gian bắt đầu mở:</label>
+                <input id="newCodeStartTimeInput" type="datetime-local" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Thời gian hết hạn (Khóa):</label>
+                <input id="newCodeExpireTimeInput" type="datetime-local" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono" />
+              </div>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Ghi chú mã kích hoạt:</label>
@@ -745,6 +821,16 @@
               <label class="block text-xs font-bold text-slate-700 mb-1">Tiêu đề đầy đủ của Đề thi:</label>
               <input id="adminExamTitleInput" type="text" value="Đề Thi Thử Vào Lớp 10 THPT — Trường THCS Yên Hòa, Cầu Giấy (2026)" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-semibold" />
             </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">⏱️ Giờ bắt đầu mở đề:</label>
+                <input id="adminExamStartInput" type="datetime-local" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">⏱️ Giờ đóng / hết hạn đề:</label>
+                <input id="adminExamExpireInput" type="datetime-local" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono" />
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button id="adminSaveExamBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow transition">
                 💾 Lưu Đề Thi & Sinh Bộ Câu Hỏi Tự Động
@@ -776,55 +862,70 @@
       </div>
     </section>
 
-    <!-- ==================== AUTHENTICATION & ACCOUNT SWITCHER MODAL ==================== -->
-    <div id="authModalBackdrop" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl max-w-lg w-full p-6 border border-slate-200 shadow-2xl space-y-5">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div>
-            <span class="px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-extrabold text-[11px]">HỆ THỐNG TÀI KHOẢN & PHÂN QUYỀN</span>
-            <h3 class="text-lg font-extrabold text-slate-900 mt-1">Đăng Nhập Hoặc Tạo Tài Khoản Mới</h3>
+    <!-- ==================== STARTUP AUTHENTICATION, SAVED CREDENTIALS & DEDICATED ACTIVATION PORTAL ==================== -->
+    <div id="authModalBackdrop" class="fixed inset-0 z-50 bg-gradient-to-br from-indigo-100/95 via-sky-50/95 to-amber-50/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 border-2 border-indigo-100 shadow-[0_20px_60px_-15px_rgba(79,70,229,0.22)] space-y-4 my-auto relative overflow-hidden">
+        <!-- Decorative Top Mathematical Ribbon -->
+        <div class="p-4 -mx-6 -mt-6 sm:-mx-7 sm:-mt-7 mb-2 bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 text-white flex items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-extrabold text-[11px]">∑ HANOIMATH 10 PRO • CỔNG ĐĂNG NHẬP</span>
+              <span id="authModalRealtimeBadge" class="px-2.5 py-0.5 rounded-full bg-amber-300 text-slate-950 font-mono text-[11px] font-extrabold">⏱️ Thời gian thực</span>
+            </div>
+            
           </div>
-          <button id="closeAuthModalBtn" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm flex items-center justify-center">✕</button>
+          <button id="closeAuthModalBtn" class="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-sm flex items-center justify-center shrink-0" title="Đóng cửa sổ">✕</button>
         </div>
 
-        <!-- Quick Demo Switcher Strip -->
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-          <div class="text-[11px] font-bold text-slate-500 uppercase">⚡ Chuyển nhanh tài khoản có sẵn (1-Click):</div>
-          <div class="flex flex-wrap gap-1.5">
-            <button data-quick-login="duytam939" class="px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs">
-              👑 Admin: duytam939 (MK: duytam939)
-            </button>
-            <button data-quick-login="hocsinh01" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs">
-              🎓 HS Đã Kích Hoạt: hocsinh01
-            </button>
-            <button data-quick-login="hocsinh02" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs">
-              🔒 HS Chưa Kích Hoạt: hocsinh02
-            </button>
+        <!-- Saved Credentials on This Device (Only visible after user has logged in and saved on this machine) -->
+        <div id="savedCredentialsSection" class="hidden p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-extrabold text-slate-600 uppercase">💾 Tài khoản đã đăng nhập trên thiết bị này (Nhấn để chọn nhanh):</span>
+            <button type="button" id="clearDeviceSavedCredsBtn" class="text-[11px] font-semibold text-rose-600 hover:underline">Xóa lịch sử lưu trên máy</button>
+          </div>
+          <div id="savedCredentialsList" class="flex flex-wrap gap-1.5">
+            <!-- Populated dynamically ONLY from accounts actually logged in on this device -->
           </div>
         </div>
 
-        <!-- Tabs: Login vs Register -->
-        <div class="flex gap-2 border-b border-slate-200 pb-2">
-          <button id="tabAuthLoginBtn" class="flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white">Đăng Nhập Tài Khoản</button>
-          <button id="tabAuthRegisterBtn" class="flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200">Tạo Tài Khoản Mới (Đăng Ký)</button>
+        <!-- 3 Separate Tabs: Login | Register | Dedicated Activation Code -->
+        <div class="grid grid-cols-3 gap-1.5 border-b border-slate-200 pb-2">
+          <button id="tabAuthLoginBtn" class="py-2 px-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white transition">
+            Đăng Nhập Tài Khoản
+          </button>
+          <button id="tabAuthRegisterBtn" class="py-2 px-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+            Tạo Tài Khoản Mới (Đăng Ký)
+          </button>
+          <button id="tabAuthActivateBtn" class="py-2 px-2 rounded-xl font-extrabold text-xs bg-amber-100 text-amber-900 hover:bg-amber-200 transition">
+            🔓 3. Nhập Mã Kích Hoạt Riêng
+          </button>
         </div>
 
-        <!-- Login Form -->
+        <!-- TAB 1: Login Form (With Remember Username & Password) -->
         <div id="authLoginForm" class="space-y-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Tên tài khoản (Username):</label>
-            <input id="loginUsernameInput" type="text" value="duytam939" placeholder="Nhập tên tài khoản (VD: duytam939)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-mono font-bold" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Tên tài khoản (Username):</label>
+              <input id="loginUsernameInput" type="text" value="" autocomplete="username" placeholder="Nhập tên đăng nhập của bạn..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-mono font-bold" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu (Password):</label>
+              <input id="loginPasswordInput" type="password" value="" autocomplete="current-password" placeholder="Nhập mật khẩu của bạn..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-mono font-bold" />
+            </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu (Password):</label>
-            <input id="loginPasswordInput" type="password" value="duytam939" placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-mono font-bold" />
+          <div class="flex items-center justify-between text-xs">
+            <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+              <input id="rememberCredentialsCheckbox" type="checkbox" checked class="w-4 h-4 rounded accent-indigo-600" />
+              <span>Lưu tài khoản & mật khẩu đã đăng nhập cho lần sau</span>
+            </label>
+            <button type="button" id="switchToActivateTabLink" class="text-indigo-600 hover:underline font-bold">Có mã kích hoạt? Nhập tại đây →</button>
           </div>
           <button id="submitLoginBtn" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm shadow transition">
             🔑 Đăng Nhập Ngay
           </button>
         </div>
 
-        <!-- Register Form -->
+        <!-- TAB 2: Register Form -->
         <div id="authRegisterForm" class="hidden space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
@@ -841,11 +942,30 @@
             <input id="regFullNameInput" type="text" placeholder="VD: Lê Hoàng Nam - THCS Cầu Giấy" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Mã kích hoạt (Có thể nhập ngay hoặc nhập sau khi đăng nhập):</label>
-            <input id="regActivationCodeInput" type="text" placeholder="Để trống nếu chưa có mã (hoặc nhập HN10-VIP2026)" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono uppercase" />
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mã kích hoạt (Tùy chọn — Có thể nhập riêng ở Tab 3):</label>
+            <input id="regActivationCodeInput" type="text" placeholder="Nhập mã kích hoạt nếu có (hoặc để trống nhập sau)" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono uppercase" />
           </div>
           <button id="submitRegisterBtn" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow transition">
             ✨ Tạo Tài Khoản & Đăng Nhập
+          </button>
+        </div>
+
+        <!-- TAB 3: Dedicated Activation Code Section (Phần Nhập Mã Kích Hoạt Riêng) -->
+        <div id="authActivateForm" class="hidden space-y-3">
+          <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1">
+            <div class="font-extrabold">🔓 KHU VỰC NHẬP MÃ KÍCH HOẠT RIÊNG BIỆT (KIỂM TRA THỜI GIAN THỰC)</div>
+            <p>Nhập tên tài khoản cần mở khóa và Mã Kích Hoạt do Admin (<strong>duytam939</strong>) cấp. Hệ thống sẽ kiểm tra thời gian bắt đầu và thời gian hết hạn theo thời gian thực.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tên tài khoản cần kích hoạt / gia hạn:</label>
+            <input id="dedicatedActivateUsernameInput" type="text" value="" placeholder="Nhập tên tài khoản cần kích hoạt..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono font-bold" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mã Kích Hoạt (*):</label>
+            <input id="dedicatedActivateCodeInput" type="text" value="" placeholder="Nhập Mã Kích Hoạt được cấp..." class="w-full px-3.5 py-2 rounded-xl border border-amber-400 bg-amber-50/40 text-sm font-mono font-extrabold uppercase text-slate-900" />
+          </div>
+          <button id="submitDedicatedActivateBtn" class="w-full py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-sm shadow transition">
+            🔓 Kích Hoạt Tài Khoản & Vào Phòng Luyện Ngay
           </button>
         </div>
       </div>
@@ -2912,9 +3032,9 @@
       document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         const isCurrent = btn.getAttribute('data-nav') === viewName;
         if (isCurrent) {
-          btn.className = 'nav-tab-btn px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 whitespace-nowrap';
+          btn.className = 'nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-indigo-600 text-white shadow-md shadow-indigo-500/20 flex items-center gap-1.5 whitespace-nowrap';
         } else {
-          btn.className = 'nav-tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 whitespace-nowrap';
+          btn.className = 'nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1.5 whitespace-nowrap';
         }
       });
 
@@ -2980,7 +3100,7 @@
 
         html += `
           <div class="space-y-3">
-            <div class="px-4 py-2.5 rounded-xl bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2 shadow-sm">
+            <div class="px-4 py-3 rounded-2xl math-level-header text-white flex flex-wrap items-center justify-between gap-2 shadow-md shadow-indigo-500/15">
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-0.5 rounded ${lvMeta.badge} text-white font-extrabold text-xs">${lvMeta.stars}</span>
                 <span class="font-extrabold text-xs sm:text-sm">${lvMeta.name}</span>
@@ -3184,7 +3304,7 @@
           lastPart = q.part;
           html += `
             <div class="pt-1">
-              <div class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs sm:text-sm flex items-center justify-between shadow-sm">
+              <div class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-600 text-white font-bold text-xs sm:text-sm flex items-center justify-between shadow-sm">
                 <span>📌 ${q.part.toUpperCase()}</span>
                 <span class="text-amber-300 text-xs">Cấu trúc Sở GD&ĐT Hà Nội</span>
               </div>
@@ -3548,14 +3668,14 @@
 
         if (q.isGeoBigHeader) {
           html += `
-            <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-md space-y-3 mt-3">
+            <div class="bg-gradient-to-br from-indigo-50 via-sky-50 to-white text-slate-900 rounded-2xl p-5 border-2 border-indigo-200 shadow-md space-y-3 mt-3">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <span class="px-3 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-xs">📐 BÀI HÌNH LỚN SỐ ${q.geoBigNumber} / 25</span>
-                <span class="text-xs text-indigo-300 font-semibold">Đầy đủ 3 ý phân hóa a, b, c</span>
+                <span class="text-xs text-indigo-700 font-bold">Đầy đủ 3 ý phân hóa a, b, c</span>
               </div>
-              <h3 class="text-base font-extrabold text-amber-300">${q.geoBigTitle}</h3>
+              <h3 class="text-base font-extrabold text-indigo-950">${q.geoBigTitle}</h3>
               <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-                <div class="lg:col-span-7 text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-800/90 p-3.5 rounded-xl border border-slate-700">
+                <div class="lg:col-span-7 text-xs sm:text-sm text-slate-800 leading-relaxed bg-white/95 p-4 rounded-xl border border-indigo-100 shadow-sm">
                   ${q.geoBigStatement}
                 </div>
                 <div class="lg:col-span-5 flex flex-col items-center bg-white p-2.5 rounded-xl">
@@ -4206,8 +4326,8 @@
           appState.examLevelFilter = btn.getAttribute('data-level-pill') || 'all';
           document.querySelectorAll('.level-pill-btn').forEach(b => {
             b.className = b === btn
-              ? 'level-pill-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 transition'
-              : 'level-pill-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition';
+              ? 'level-pill-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition'
+              : 'level-pill-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/90 text-slate-700 border border-indigo-200 hover:bg-indigo-50 transition';
           });
           renderExamCatalog();
         });
@@ -4509,9 +4629,9 @@
     // 14. ACCOUNT DATABASE, ACTIVATION CODES, ADMIN CENTER & PROGRESSION GATING
     // ============================================================================
     const DEFAULT_ACTIVATION_CODES = [
-      { code: 'HN10-VIP2026', note: 'Mã kích hoạt lớp luyện đề chất lượng cao 2026', maxUses: 30, usedBy: ['hocsinh01'], createdAt: '25/10/2026' },
-      { code: 'HN10-2027-PRO', note: 'Mã mở khóa định hướng 2027 toàn diện', maxUses: 50, usedBy: [], createdAt: '28/10/2026' },
-      { code: 'DUYTAM939-VIP', note: 'Mã đặc quyền do Admin duytam939 phát hành', maxUses: 999, usedBy: [], createdAt: '30/10/2026' }
+      { code: 'HN10-VIP2026', note: 'Mã kích hoạt lớp luyện đề chất lượng cao 2026', maxUses: 30, usedBy: ['hocsinh01'], startTime: '2026-01-01T00:00', expireTime: '2027-12-31T23:59', createdAt: '25/10/2026' },
+      { code: 'HN10-2027-PRO', note: 'Mã mở khóa định hướng 2027 toàn diện', maxUses: 50, usedBy: [], startTime: '2026-01-01T00:00', expireTime: '2027-12-31T23:59', createdAt: '28/10/2026' },
+      { code: 'DUYTAM939-VIP', note: 'Mã đặc quyền do Admin duytam939 phát hành', maxUses: 999, usedBy: [], startTime: '2026-01-01T00:00', expireTime: '2028-12-31T23:59', createdAt: '30/10/2026' }
     ];
 
     function createInitialSolvedMap(fillMin20Pct = false) {
@@ -4587,30 +4707,43 @@
     const authStore = {
       accounts: [],
       codes: [],
-      currentUsername: 'duytam939',
+      savedCredentials: [], // Only stores credentials actually entered and logged in on THIS device!
+      currentUsername: null,
+      isAuthenticated: false,
       inspectedUsername: 'hocsinh01'
     };
 
     function loadAuthStore() {
       try {
-        const rawAcc = localStorage.getItem('hanoimath10_accounts_v5');
+        const rawAcc = localStorage.getItem('hanoimath10_accounts_v7');
         if (rawAcc) {
           const parsed = JSON.parse(rawAcc);
           if (Array.isArray(parsed) && parsed.length > 0) authStore.accounts = parsed;
         }
-        const rawCodes = localStorage.getItem('hanoimath10_codes_v5');
+        const rawCodes = localStorage.getItem('hanoimath10_codes_v7');
         if (rawCodes) {
           const parsedC = JSON.parse(rawCodes);
           if (Array.isArray(parsedC) && parsedC.length > 0) authStore.codes = parsedC;
         }
-        const savedCur = localStorage.getItem('hanoimath10_current_user_v5');
-        if (savedCur) authStore.currentUsername = savedCur;
+        const rawSavedCreds = localStorage.getItem('hanoimath10_device_saved_creds_v7');
+        if (rawSavedCreds) {
+          const parsedSC = JSON.parse(rawSavedCreds);
+          if (Array.isArray(parsedSC)) authStore.savedCredentials = parsedSC;
+        }
+        const rawExams = localStorage.getItem('hanoimath10_exams_catalog_v7');
+        if (rawExams) {
+          const parsedEx = JSON.parse(rawExams);
+          if (Array.isArray(parsedEx) && parsedEx.length >= 25) {
+            EXAM_CATALOG.length = 0;
+            parsedEx.forEach(e => EXAM_CATALOG.push(e));
+          }
+        }
       } catch (e) {}
 
       if (authStore.accounts.length === 0) {
         authStore.accounts = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
       }
-      // Always guarantee Admin 'duytam939' with password 'duytam939' exists!
+      // Internal System Recognition: Admin 'duytam939' with password 'duytam939' is always stored in the internal database (NOT exposed on login UI)
       let adminAcc = authStore.accounts.find(a => a.username === 'duytam939');
       if (!adminAcc) {
         authStore.accounts.unshift(JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS[0])));
@@ -4623,15 +4756,79 @@
       if (authStore.codes.length === 0) {
         authStore.codes = JSON.parse(JSON.stringify(DEFAULT_ACTIVATION_CODES));
       }
+
+      // Default currentUsername before login is the last saved device credential if any, else hocsinh01 for background state
+      if (authStore.savedCredentials.length > 0) {
+        authStore.currentUsername = authStore.savedCredentials[0].username;
+      } else {
+        authStore.currentUsername = 'hocsinh01';
+      }
       syncCurrentUserToAppState();
+      renderSavedCredentialsList();
     }
 
     function saveAuthStore() {
       try {
-        localStorage.setItem('hanoimath10_accounts_v5', JSON.stringify(authStore.accounts));
-        localStorage.setItem('hanoimath10_codes_v5', JSON.stringify(authStore.codes));
-        localStorage.setItem('hanoimath10_current_user_v5', authStore.currentUsername);
+        localStorage.setItem('hanoimath10_accounts_v7', JSON.stringify(authStore.accounts));
+        localStorage.setItem('hanoimath10_codes_v7', JSON.stringify(authStore.codes));
+        localStorage.setItem('hanoimath10_device_saved_creds_v7', JSON.stringify(authStore.savedCredentials));
+        localStorage.setItem('hanoimath10_exams_catalog_v7', JSON.stringify(EXAM_CATALOG));
+        if (authStore.currentUsername) {
+          localStorage.setItem('hanoimath10_current_user_v7', authStore.currentUsername);
+        }
       } catch (e) {}
+    }
+
+    function rememberUserCredential(username, password, role) {
+      const existingIdx = authStore.savedCredentials.findIndex(c => c.username.toLowerCase() === username.toLowerCase());
+      const entry = {
+        username,
+        password,
+        role
+      };
+      if (existingIdx >= 0) {
+        authStore.savedCredentials.splice(existingIdx, 1);
+      }
+      authStore.savedCredentials.unshift(entry);
+      saveAuthStore();
+      renderSavedCredentialsList();
+    }
+
+    function renderSavedCredentialsList() {
+      const section = document.getElementById('savedCredentialsSection');
+      const container = document.getElementById('savedCredentialsList');
+      const closeBtn = document.getElementById('closeAuthModalBtn');
+      if (closeBtn) {
+        closeBtn.classList.toggle('hidden', !authStore.isAuthenticated);
+      }
+      if (!container || !section) return;
+
+      if (authStore.savedCredentials.length === 0) {
+        section.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+
+      section.classList.remove('hidden');
+      container.innerHTML = authStore.savedCredentials.map((c, idx) => `
+        <div class="inline-flex items-center rounded-lg border bg-white border-slate-300 text-slate-800 overflow-hidden shadow-sm">
+          <button type="button" data-fill-cred-idx="${idx}" class="px-2.5 py-1 text-xs font-bold hover:bg-indigo-50 transition flex items-center gap-1.5" title="Nhấn để tự động điền tài khoản đã lưu trên máy này">
+            <span>👤</span>
+            <span class="font-mono">${c.username}</span>
+            <span class="text-[10px] text-emerald-600 font-semibold">(Đã lưu MK)</span>
+          </button>
+          <button type="button" data-remove-cred-idx="${idx}" class="px-1.5 py-1 text-[10px] text-slate-400 hover:text-rose-600 hover:bg-rose-50 border-l border-slate-200" title="Xóa tài khoản này khỏi bộ nhớ máy">✕</button>
+        </div>
+      `).join('');
+
+      // Pre-fill login inputs with the most recently logged-in account on THIS device
+      const latest = authStore.savedCredentials[0];
+      const uInp = document.getElementById('loginUsernameInput');
+      const pInp = document.getElementById('loginPasswordInput');
+      if (uInp && pInp && latest) {
+        uInp.value = latest.username;
+        pInp.value = latest.password;
+      }
     }
 
     function getCurrentAccount() {
@@ -4695,35 +4892,103 @@
       return { uniqueDone, totalExams, minReq, pct, passed60: uniqueDone >= minReq };
     }
 
+    // Real-time window evaluator for Activation Codes, Student Accounts & Scheduled Exams
+    function toLocalIsoMinute(dateObj) {
+      const pad = n => String(n).padStart(2, '0');
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+    }
+
+    function formatDisplayDateTime(isoStr) {
+      if (!isoStr) return 'Không giới hạn';
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return isoStr;
+      return d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function evaluateRealtimeWindow(startTimeStr, expireTimeStr) {
+      const now = new Date();
+      if (startTimeStr) {
+        const st = new Date(startTimeStr);
+        if (!isNaN(st.getTime()) && now < st) {
+          const diffSec = Math.max(0, Math.floor((st - now) / 1000));
+          const hrs = Math.floor(diffSec / 3600), mins = Math.floor((diffSec % 3600) / 60);
+          return {
+            valid: false,
+            status: 'upcoming',
+            badge: '⏳ Chưa tới giờ mở',
+            detail: `Mở lúc ${formatDisplayDateTime(startTimeStr)} (còn ${hrs}h ${mins}p)`
+          };
+        }
+      }
+      if (expireTimeStr) {
+        const exp = new Date(expireTimeStr);
+        if (!isNaN(exp.getTime()) && now > exp) {
+          return {
+            valid: false,
+            status: 'expired',
+            badge: '🔴 Đã hết hạn',
+            detail: `Hết hạn lúc ${formatDisplayDateTime(expireTimeStr)}`
+          };
+        }
+        if (!isNaN(exp.getTime())) {
+          const remSec = Math.max(0, Math.floor((exp - now) / 1000));
+          const days = Math.floor(remSec / 86400);
+          const hrs = Math.floor((remSec % 86400) / 3600);
+          const mins = Math.floor((remSec % 3600) / 60);
+          return {
+            valid: true,
+            status: 'active',
+            badge: '🟢 Đang hiệu lực',
+            detail: `Hết hạn: ${formatDisplayDateTime(expireTimeStr)} (còn ${days > 0 ? days + ' ngày ' : ''}${hrs}h ${mins}p)`
+          };
+        }
+      }
+      return { valid: true, status: 'active', badge: '🟢 Đang hiệu lực', detail: 'Không giới hạn thời gian' };
+    }
+
+    function isAccountRealtimeActive(acc) {
+      if (!acc) return { active: false, reason: 'Chưa đăng nhập' };
+      if (acc.role === 'admin' && acc.username === 'duytam939') return { active: true, reason: 'Toàn quyền Admin Vĩnh Viễn' };
+      if (!acc.isActivated) return { active: false, reason: 'Chưa nhập Mã Kích Hoạt' };
+      const win = evaluateRealtimeWindow(acc.validFrom, acc.validUntil);
+      if (!win.valid) return { active: false, reason: `${win.badge} — ${win.detail}` };
+      return { active: true, reason: win.detail };
+    }
+
+    // Cascading 60% Level Unlock for ALL levels (Level 1 -> Level 2 -> Level 3 -> Level 4 -> Level 5)
     function isExamLevelUnlockedForUser(acc, targetLevel) {
       if (!acc) return { unlocked: false, reason: 'Chưa đăng nhập' };
       if (acc.role === 'admin') return { unlocked: true, reason: 'Toàn quyền Admin (duytam939)' };
-      if (!acc.isActivated) return { unlocked: false, reason: 'Cần nhập Mã Kích Hoạt' };
+      const rt = isAccountRealtimeActive(acc);
+      if (!rt.active) return { unlocked: false, reason: rt.reason };
       if (targetLevel <= 1) return { unlocked: true, reason: 'Mức đầu (Level 1) không giới hạn' };
 
-      const prevLv = targetLevel - 1;
-      const prevStat = getLevelExamStatsForUser(acc, prevLv);
       const topicGate = getAllTopicsGateSummary(acc);
 
-      if (!prevStat.passed60 && !topicGate.allPassed) {
-        return {
-          unlocked: false,
-          reason: `Cần làm đủ ≥60% đề Level ${prevLv} (hiện tại ${prevStat.uniqueDone}/${prevStat.minReq} đề) VÀ đạt ≥20% số câu mỗi chuyên đề trừ Câu chặn 10 (${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề đạt)`
-        };
+      // Check cascading 60% completion for EVERY previous level from 1 up to targetLevel - 1
+      for (let lv = 1; lv < targetLevel; lv++) {
+        const st = getLevelExamStatsForUser(acc, lv);
+        if (!st.passed60) {
+          if (lv === targetLevel - 1 && !topicGate.allPassed) {
+            return {
+              unlocked: false,
+              reason: `Cần hoàn thành ≥60% đề Level ${lv} (hiện tại ${st.uniqueDone}/${st.minReq} đề) VÀ đạt ≥20% câu hỏi mỗi chuyên đề trừ Câu chặn 10 (${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề đạt)`
+            };
+          }
+          return {
+            unlocked: false,
+            reason: `Cần hoàn thành tối thiểu 60% số đề của Level ${lv} trước (Đã làm ${st.uniqueDone}/${st.totalExams} đề ở Level ${lv}, cần tối thiểu ${st.minReq} đề khác nhau)`
+          };
+        }
       }
-      if (!prevStat.passed60) {
-        return {
-          unlocked: false,
-          reason: `Chưa làm đủ 60% số đề của Level ${prevLv} (Đã làm ${prevStat.uniqueDone}/${prevStat.totalExams} đề, cần tối thiểu ${prevStat.minReq} đề khác nhau)`
-        };
-      }
+
       if (!topicGate.allPassed) {
         return {
           unlocked: false,
-          reason: `Cần hoàn thành tối thiểu 20% số câu duy nhất ở mỗi chuyên đề trừ Câu chặn 10 (Đã đạt ${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề)`
+          reason: `Đã đủ ≥60% đề Level ${targetLevel - 1}, nhưng cần làm tối thiểu 20% số câu duy nhất ở mỗi chuyên đề trừ Câu chặn 10 (Đã đạt ${topicGate.passedCount}/${topicGate.totalRequiredTopics} chuyên đề)`
         };
       }
-      return { unlocked: true, reason: 'Đã đủ điều kiện mở khóa' };
+      return { unlocked: true, reason: `Đã hoàn thành ≥60% đề Level ${targetLevel - 1} & đạt chuẩn Chuyên đề` };
     }
 
     // ------------------------------------------------------------------------
@@ -4758,7 +5023,8 @@
       document.getElementById('topicRegenBatchBtn')?.classList.toggle('hidden', !isAdmin);
 
       // Activation Gate Overlays for non-admin unactivated users
-      const isLockedByActivation = !isAdmin && !acc.isActivated;
+      const rtCheck = isAccountRealtimeActive(acc);
+      const isLockedByActivation = !isAdmin && !rtCheck.active;
       document.getElementById('examActivationGate')?.classList.toggle('hidden', !isLockedByActivation);
       document.getElementById('examLobbyPanel')?.classList.toggle('hidden', isLockedByActivation || appState.examStage !== 'lobby');
       document.getElementById('progressionStatusBanner')?.classList.toggle('hidden', isLockedByActivation);
@@ -4786,28 +5052,45 @@
       const lv2Unlock = isExamLevelUnlockedForUser(acc, 2);
 
       if (progBanner) {
-        progBanner.innerHTML = `
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-            <div class="space-y-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-extrabold text-xs">
-                  ${isAdmin ? '👑 CHẾ ĐỘ ADMIN (MỞ KHÓA TOÀN BỘ 25 ĐỀ & QUYỀN SỬA/THÊM/SINH ĐỀ)' : '🎯 LỘ TRÌNH MỞ KHÓA CẤP ĐỘ ĐỀ THI (1 ĐỀ / 1 CÂU LÀM NHIỀU LẦN CHỈ TÍNH 1 LẦN)'}
-                </span>
+        const rtInfo = isAccountRealtimeActive(acc);
+        const allLvCards = [1, 2, 3, 4, 5].map(lv => {
+          const st = getLevelExamStatsForUser(acc, lv);
+          const unl = isExamLevelUnlockedForUser(acc, lv);
+          return `
+            <div class="p-2.5 rounded-xl border ${unl.unlocked ? 'bg-emerald-50/80 border-emerald-300' : 'bg-slate-100 border-slate-200 opacity-85'} text-xs flex flex-col justify-between gap-1">
+              <div class="flex items-center justify-between font-extrabold ${unl.unlocked ? 'text-emerald-900' : 'text-slate-600'}">
+                <span>Level ${lv}</span>
+                <span>${unl.unlocked ? '🔓 Mở' : '🔒 Khóa'}</span>
               </div>
-              <p class="text-xs text-slate-600">
-                <strong>Level 1 (Đề 01–05):</strong> Không giới hạn. • <strong>Để mở khóa Level 2+:</strong> Cần hoàn thành tối thiểu <strong>60% số đề duy nhất của mức trước (≥ 3/5 đề)</strong> VÀ làm tối thiểu <strong>20% số câu duy nhất ở mỗi chuyên đề (trừ Câu chặn 10)</strong>.
-              </p>
+              <div class="text-[11px] font-bold ${st.passed60 ? 'text-emerald-700' : 'text-indigo-700'}">
+                Đã làm: ${st.uniqueDone}/${st.totalExams} đề (${st.pct}%)
+              </div>
+              <div class="text-[10px] text-slate-500">
+                ${lv === 1 ? 'Mức đầu: Không giới hạn' : `Cần ≥60% Level ${lv - 1} (${st.minReq}/${st.totalExams} đề)`}
+              </div>
             </div>
-            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-              <div class="px-3 py-2 rounded-xl border ${lv1Stat.passed60 ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'} text-xs font-bold">
-                Đề Level 1: ${lv1Stat.uniqueDone}/${lv1Stat.totalExams} đề (${lv1Stat.pct}% • Cần ≥60%)
+          `;
+        }).join('');
+
+        progBanner.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+              <div class="space-y-0.5">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-extrabold text-xs">
+                    ${isAdmin ? '👑 CHẾ ĐỘ ADMIN: MỞ KHÓA TOÀN BỘ 5 LEVEL & QUẢN TRỊ THỜI GIAN THỰC' : '🎯 SƠ ĐỒ MỞ KHÓA DÂY CHUYỀN 5 LEVEL (ĐIỀU KIỆN ≥ 60% MỖI LEVEL TRƯỚC & ≥ 20% CHUYÊN ĐỀ)'}
+                  </span>
+                  <span class="px-2.5 py-0.5 rounded bg-slate-900 text-amber-300 font-mono text-[11px] font-bold">
+                    ⏱️ Hạn TK: ${rtInfo.reason}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600">
+                  Muốn mở khóa <strong>Level tiếp theo</strong> cần hoàn thành tối thiểu <strong>60% số đề duy nhất của mỗi Level liền trước (≥ 3/5 đề)</strong> và đạt <strong>≥ 20% số câu mỗi chuyên đề (trừ Câu chặn 10: ${topicGate.passedCount}/${topicGate.totalRequiredTopics} đạt)</strong>.
+                </p>
               </div>
-              <div class="px-3 py-2 rounded-xl border ${topicGate.allPassed ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-indigo-50 border-indigo-200 text-indigo-900'} text-xs font-bold">
-                Chuyên đề ≥20% (trừ Chặn 10): ${topicGate.passedCount}/${topicGate.totalRequiredTopics} đạt
-              </div>
-              <div class="px-3 py-2 rounded-xl font-extrabold text-xs ${lv2Unlock.unlocked ? 'bg-emerald-600 text-white' : 'bg-rose-100 text-rose-800 border border-rose-200'}">
-                ${lv2Unlock.unlocked ? '🔓 Đã Mở Khóa Level 2' : '🔒 Level 2 Đang Khóa'}
-              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              ${allLvCards}
             </div>
           </div>
         `;
@@ -4877,7 +5160,7 @@
 
         html += `
           <div class="space-y-3">
-            <div class="px-4 py-2.5 rounded-xl bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2 shadow-sm">
+            <div class="px-4 py-3 rounded-2xl math-level-header text-white flex flex-wrap items-center justify-between gap-2 shadow-md shadow-indigo-500/15">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="px-2.5 py-0.5 rounded ${lvMeta.badge} text-white font-extrabold text-xs">${lvMeta.stars}</span>
                 <span class="font-extrabold text-xs sm:text-sm">${lvMeta.name}</span>
@@ -5024,20 +5307,30 @@
       // 2. Detailed Student Inspector Panel
       renderAdminStudentInspector();
 
-      // 3. Activation Codes Table
+      // 3. Activation Codes Table (With Real-time Start & Expire Status)
       const codeTbody = document.getElementById('adminCodesTableBody');
       if (codeTbody) {
-        codeTbody.innerHTML = authStore.codes.map((c, cIdx) => `
-          <tr class="hover:bg-slate-50">
-            <td class="py-2.5 px-3 font-mono font-extrabold text-indigo-700">${c.code}</td>
-            <td class="py-2.5 px-3 text-slate-600">${c.note || ''}</td>
-            <td class="py-2.5 px-3 font-bold">${(c.usedBy || []).length} / ${c.maxUses}</td>
-            <td class="py-2.5 px-3 text-xs text-slate-500">${(c.usedBy || []).length > 0 ? c.usedBy.join(', ') : 'Chưa có'}</td>
-            <td class="py-2.5 px-3 text-right">
-              <button data-admin-del-code="${cIdx}" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs">Xóa mã</button>
-            </td>
-          </tr>
-        `).join('');
+        codeTbody.innerHTML = authStore.codes.map((c, cIdx) => {
+          const rtWin = evaluateRealtimeWindow(c.startTime, c.expireTime);
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="py-2.5 px-3 font-mono font-extrabold text-indigo-700">
+                <div>${c.code}</div>
+                <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-sans font-bold ${rtWin.valid ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${rtWin.badge}</span>
+              </td>
+              <td class="py-2.5 px-3 text-xs text-slate-600">
+                <div class="font-semibold text-slate-800">${c.note || ''}</div>
+                <div class="text-[11px] font-mono text-slate-500">Bắt đầu: ${formatDisplayDateTime(c.startTime)}</div>
+                <div class="text-[11px] font-mono text-slate-500">Hết hạn: ${formatDisplayDateTime(c.expireTime)}</div>
+              </td>
+              <td class="py-2.5 px-3 font-bold">${(c.usedBy || []).length} / ${c.maxUses}</td>
+              <td class="py-2.5 px-3 text-xs text-slate-500">${(c.usedBy || []).length > 0 ? c.usedBy.join(', ') : 'Chưa có'}</td>
+              <td class="py-2.5 px-3 text-right">
+                <button data-admin-del-code="${cIdx}" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs">Xóa mã</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
       }
 
       // 4. Admin Exams Table
@@ -5168,31 +5461,145 @@
       `;
     }
 
+    function switchAuthModalTab(tabName) {
+      const tabs = [
+        { btn: 'tabAuthLoginBtn', form: 'authLoginForm', activeClass: 'py-2 px-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white transition', inactiveClass: 'py-2 px-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition' },
+        { btn: 'tabAuthRegisterBtn', form: 'authRegisterForm', activeClass: 'py-2 px-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white transition', inactiveClass: 'py-2 px-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition' },
+        { btn: 'tabAuthActivateBtn', form: 'authActivateForm', activeClass: 'py-2 px-2 rounded-xl font-extrabold text-xs bg-amber-400 text-slate-950 shadow transition', inactiveClass: 'py-2 px-2 rounded-xl font-extrabold text-xs bg-amber-100 text-amber-900 hover:bg-amber-200 transition' }
+      ];
+      tabs.forEach(t => {
+        const b = document.getElementById(t.btn);
+        const f = document.getElementById(t.form);
+        const isTarget = (tabName === 'login' && t.btn === 'tabAuthLoginBtn') ||
+                         (tabName === 'register' && t.btn === 'tabAuthRegisterBtn') ||
+                         (tabName === 'activate' && t.btn === 'tabAuthActivateBtn');
+        if (b) b.className = isTarget ? t.activeClass : t.inactiveClass;
+        if (f) f.classList.toggle('hidden', !isTarget);
+      });
+    }
+
+    function applyActivationCodeToAccount(targetUsername, rawCode) {
+      const codeStr = (rawCode || '').trim().toUpperCase();
+      if (!codeStr) {
+        showToast('Vui lòng nhập Mã Kích Hoạt!', 'warning');
+        return false;
+      }
+      const acc = authStore.accounts.find(a => a.username.toLowerCase() === (targetUsername || '').trim().toLowerCase());
+      if (!acc) {
+        showToast(`Không tìm thấy tài khoản "${targetUsername}"! Hãy tạo tài khoản trước.`, 'warning');
+        return false;
+      }
+      const codeObj = authStore.codes.find(c => c.code.toUpperCase() === codeStr);
+      if (!codeObj) {
+        showToast('Mã kích hoạt không tồn tại! Vui lòng kiểm tra lại hoặc dùng mã HN10-VIP2026.', 'warning');
+        return false;
+      }
+      // Check Real-Time Start & Expiration of this code!
+      const rtWin = evaluateRealtimeWindow(codeObj.startTime, codeObj.expireTime);
+      if (!rtWin.valid) {
+        showToast(`Mã kích hoạt ${codeObj.code} không khả dụng: ${rtWin.badge} (${rtWin.detail})!`, 'warning');
+        return false;
+      }
+      if ((codeObj.usedBy || []).length >= codeObj.maxUses && !(codeObj.usedBy || []).includes(acc.username)) {
+        showToast('Mã kích hoạt này đã hết lượt sử dụng!', 'warning');
+        return false;
+      }
+      acc.isActivated = true;
+      acc.activationCodeUsed = codeObj.code;
+      acc.validFrom = codeObj.startTime || null;
+      acc.validUntil = codeObj.expireTime || null;
+      if (!codeObj.usedBy) codeObj.usedBy = [];
+      if (!codeObj.usedBy.includes(acc.username)) codeObj.usedBy.push(acc.username);
+
+      authStore.currentUsername = acc.username;
+      syncCurrentUserToAppState();
+      saveAuthStore();
+      refreshAuthAndRoleUI();
+      showToast(`🔓 Kích hoạt thành công tài khoản "${acc.username}" bằng mã ${codeObj.code} (${rtWin.detail})!`, 'success');
+      return true;
+    }
+
+    function initDefaultDatetimeInputs() {
+      const now = new Date();
+      const plus30 = new Date(now.getTime() + 30 * 86400 * 1000);
+      const stInp = document.getElementById('newCodeStartTimeInput');
+      const expInp = document.getElementById('newCodeExpireTimeInput');
+      if (stInp && !stInp.value) stInp.value = toLocalIsoMinute(now);
+      if (expInp && !expInp.value) expInp.value = toLocalIsoMinute(plus30);
+
+      const exSt = document.getElementById('adminExamStartInput');
+      const exExp = document.getElementById('adminExamExpireInput');
+      if (exSt && !exSt.value) exSt.value = toLocalIsoMinute(now);
+      if (exExp && !exExp.value) exExp.value = toLocalIsoMinute(plus30);
+    }
+
+    function startRealtimeSystemClock() {
+      const updateClock = () => {
+        const nowStr = new Date().toLocaleString('vi-VN', {
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          day: '2-digit', month: '2-digit', year: 'numeric'
+        });
+        const hClock = document.getElementById('headerRealtimeClock');
+        const mClock = document.getElementById('authModalRealtimeBadge');
+        if (hClock) hClock.textContent = nowStr;
+        if (mClock) mClock.textContent = `⏱️ ${nowStr}`;
+      };
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
     function bindAuthAndAdminEvents() {
+      initDefaultDatetimeInputs();
+      startRealtimeSystemClock();
       // Open/Close Auth Modal
       document.getElementById('openAuthModalBtn')?.addEventListener('click', () => {
         document.getElementById('authModalBackdrop')?.classList.remove('hidden');
       });
       document.getElementById('closeAuthModalBtn')?.addEventListener('click', () => {
+        if (!authStore.isAuthenticated) {
+          showToast('Vui lòng đăng nhập tài khoản trước khi vào hệ thống!', 'warning');
+          return;
+        }
         document.getElementById('authModalBackdrop')?.classList.add('hidden');
+      });
+      document.getElementById('clearDeviceSavedCredsBtn')?.addEventListener('click', () => {
+        authStore.savedCredentials = [];
+        saveAuthStore();
+        document.getElementById('loginUsernameInput').value = '';
+        document.getElementById('loginPasswordInput').value = '';
+        renderSavedCredentialsList();
+        showToast('Đã xóa toàn bộ tài khoản & mật khẩu lưu trên thiết bị này.', 'info');
+      });
+      document.getElementById('loginPasswordInput')?.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') document.getElementById('submitLoginBtn')?.click();
       });
       document.getElementById('adminCreateUserQuickBtn')?.addEventListener('click', () => {
         document.getElementById('authModalBackdrop')?.classList.remove('hidden');
         document.getElementById('tabAuthRegisterBtn')?.click();
       });
 
-      // Switch Login / Register tabs in modal
-      document.getElementById('tabAuthLoginBtn')?.addEventListener('click', (e) => {
-        e.currentTarget.className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white';
-        document.getElementById('tabAuthRegisterBtn').className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200';
-        document.getElementById('authLoginForm')?.classList.remove('hidden');
-        document.getElementById('authRegisterForm')?.classList.add('hidden');
+      // Switch Login / Register / Dedicated Activate tabs in modal
+      document.getElementById('tabAuthLoginBtn')?.addEventListener('click', () => switchAuthModalTab('login'));
+      document.getElementById('tabAuthRegisterBtn')?.addEventListener('click', () => switchAuthModalTab('register'));
+      document.getElementById('tabAuthActivateBtn')?.addEventListener('click', () => {
+        const cur = getCurrentAccount();
+        const uInp = document.getElementById('dedicatedActivateUsernameInput');
+        if (uInp && cur && cur.role !== 'admin') uInp.value = cur.username;
+        switchAuthModalTab('activate');
       });
-      document.getElementById('tabAuthRegisterBtn')?.addEventListener('click', (e) => {
-        e.currentTarget.className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-900 text-white';
-        document.getElementById('tabAuthLoginBtn').className = 'flex-1 py-2 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200';
-        document.getElementById('authRegisterForm')?.classList.remove('hidden');
-        document.getElementById('authLoginForm')?.classList.add('hidden');
+      document.getElementById('switchToActivateTabLink')?.addEventListener('click', () => {
+        document.getElementById('tabAuthActivateBtn')?.click();
+      });
+      document.getElementById('openDedicatedActivateBtn')?.addEventListener('click', () => {
+        document.getElementById('authModalBackdrop')?.classList.remove('hidden');
+        document.getElementById('tabAuthActivateBtn')?.click();
+      });
+      document.getElementById('submitDedicatedActivateBtn')?.addEventListener('click', () => {
+        const targetU = document.getElementById('dedicatedActivateUsernameInput')?.value || '';
+        const rawC = document.getElementById('dedicatedActivateCodeInput')?.value || '';
+        if (applyActivationCodeToAccount(targetU, rawC)) {
+          document.getElementById('authModalBackdrop')?.classList.add('hidden');
+        }
       });
 
       // Login submission
@@ -5205,6 +5612,12 @@
           return;
         }
         authStore.currentUsername = found.username;
+        authStore.isAuthenticated = true;
+        if (document.getElementById('rememberCredentialsCheckbox')?.checked !== false) {
+          rememberUserCredential(found.username, found.password, found.role);
+        } else {
+          renderSavedCredentialsList();
+        }
         syncCurrentUserToAppState();
         saveAuthStore();
         document.getElementById('authModalBackdrop')?.classList.add('hidden');
@@ -5260,6 +5673,8 @@
         };
         authStore.accounts.push(newAcc);
         authStore.currentUsername = u;
+        authStore.isAuthenticated = true;
+        rememberUserCredential(u, p, 'student');
         syncCurrentUserToAppState();
         saveAuthStore();
         document.getElementById('authModalBackdrop')?.classList.add('hidden');
@@ -5269,30 +5684,11 @@
         showToast(activated ? `🎉 Tạo tài khoản ${u} & kích hoạt mã thành công!` : `Tạo tài khoản ${u} thành công! Hãy nhập Mã Kích Hoạt để mở khóa phòng luyện.`, 'success');
       });
 
-      // Student Activation Code Gate Submit
+      // Student Activation Code Gate Submit (Real-Time Validated)
       document.getElementById('submitActivationCodeBtn')?.addEventListener('click', () => {
         const inp = (document.getElementById('studentActivationCodeInput')?.value || '').trim().toUpperCase();
-        if (!inp) {
-          showToast('Vui lòng nhập Mã Kích Hoạt!', 'warning');
-          return;
-        }
         const acc = getCurrentAccount();
-        const codeObj = authStore.codes.find(c => c.code.toUpperCase() === inp);
-        if (!codeObj) {
-          showToast('Mã kích hoạt không tồn tại! Hãy liên hệ Admin (duytam939) hoặc dùng mã mẫu HN10-VIP2026.', 'warning');
-          return;
-        }
-        if ((codeObj.usedBy || []).length >= codeObj.maxUses && !codeObj.usedBy.includes(acc.username)) {
-          showToast('Mã kích hoạt này đã hết lượt sử dụng!', 'warning');
-          return;
-        }
-        acc.isActivated = true;
-        acc.activationCodeUsed = codeObj.code;
-        if (!codeObj.usedBy) codeObj.usedBy = [];
-        if (!codeObj.usedBy.includes(acc.username)) codeObj.usedBy.push(acc.username);
-        saveAuthStore();
-        refreshAuthAndRoleUI();
-        showToast(`🔓 Kích hoạt thành công mã ${codeObj.code}! Đã mở khóa Phòng Thi (Level 1) & Phòng Chuyên Đề!`, 'success');
+        applyActivationCodeToAccount(acc.username, inp);
       });
 
       document.getElementById('jumpToActivateFromTopicBtn')?.addEventListener('click', () => {
@@ -5342,11 +5738,15 @@
           showToast('Mã kích hoạt này đã tồn tại!', 'warning');
           return;
         }
+        const stVal = document.getElementById('newCodeStartTimeInput')?.value || '';
+        const expVal = document.getElementById('newCodeExpireTimeInput')?.value || '';
         authStore.codes.unshift({
           code: codeVal,
           note: noteVal,
           maxUses: maxU,
           usedBy: [],
+          startTime: stVal,
+          expireTime: expVal,
           createdAt: new Date().toLocaleDateString('vi-VN')
         });
         saveAuthStore();
@@ -5394,6 +5794,7 @@
         }
         document.getElementById('editExamIdHidden').value = '';
         document.getElementById('adminExamFormTitle').textContent = '➕ Thêm Đề Thi Mới / Sửa Đề Thi';
+        saveAuthStore();
         renderExamCatalog();
         renderAdminDashboard();
       });
@@ -5408,6 +5809,44 @@
 
       // Delegated clicks for Quick Login, Admin Actions, Locked Level Alert
       document.body.addEventListener('click', (e) => {
+        const quickDurBtn = e.target.closest('[data-quick-dur]');
+        if (quickDurBtn) {
+          const days = parseInt(quickDurBtn.getAttribute('data-quick-dur'), 10) || 30;
+          const now = new Date();
+          const exp = new Date(now.getTime() + days * 86400 * 1000);
+          document.getElementById('newCodeStartTimeInput').value = toLocalIsoMinute(now);
+          document.getElementById('newCodeExpireTimeInput').value = toLocalIsoMinute(exp);
+          showToast(`⏱️ Đã đặt thời hạn mã: Bắt đầu ngay & hết hạn sau ${days} ngày!`, 'info');
+          return;
+        }
+
+        const fillCredBtn = e.target.closest('[data-fill-cred-idx]');
+        if (fillCredBtn) {
+          const cIdx = parseInt(fillCredBtn.getAttribute('data-fill-cred-idx'), 10);
+          const item = authStore.savedCredentials[cIdx];
+          if (item) {
+            const uInp = document.getElementById('loginUsernameInput');
+            const pInp = document.getElementById('loginPasswordInput');
+            if (uInp && pInp) {
+              uInp.value = item.username;
+              pInp.value = item.password;
+            }
+            switchAuthModalTab('login');
+            showToast(`Đã tự động điền TK "${item.username}" & mật khẩu đã lưu trên máy! Nhấn "Đăng Nhập Ngay" để vào.`, 'info');
+          }
+          return;
+        }
+
+        const remCredBtn = e.target.closest('[data-remove-cred-idx]');
+        if (remCredBtn) {
+          const cIdx = parseInt(remCredBtn.getAttribute('data-remove-cred-idx'), 10);
+          authStore.savedCredentials.splice(cIdx, 1);
+          saveAuthStore();
+          renderSavedCredentialsList();
+          showToast('Đã xóa thông tin lưu của tài khoản khỏi thiết bị này.', 'info');
+          return;
+        }
+
         const qLogin = e.target.closest('[data-quick-login]');
         if (qLogin) {
           const uname = qLogin.getAttribute('data-quick-login');
@@ -5467,11 +5906,19 @@
           const u = authStore.accounts.find(a => a.username === uname);
           if (u) {
             u.isActivated = true;
-            u.uniqueExamsDone = { ...u.uniqueExamsDone, 'de-01': 8.5, 'de-02': 8.25, 'de-03': 8.75 };
+            // Grant 60% (3/5) exams across Levels 1..4 so all cascading levels unlock
+            u.uniqueExamsDone = {
+              ...u.uniqueExamsDone,
+              'de-01': 8.5, 'de-02': 8.25, 'de-03': 8.75,
+              'de-06': 8.5, 'de-07': 8.75, 'de-08': 8.5,
+              'de-11': 8.75, 'de-12': 9.0, 'de-13': 8.75,
+              'de-16': 9.0, 'de-17': 9.25, 'de-18': 9.0
+            };
             u.uniqueSolvedTopicQuestions = createInitialSolvedMap(true);
             saveAuthStore();
             renderAdminDashboard();
-            showToast(`⚡ Đã cấp đủ 3/5 đề Level 1 (60%) & ≥20% câu ở 9 chuyên đề cho tài khoản ${u.username}!`, 'success');
+            refreshAuthAndRoleUI();
+            showToast(`⚡ Đã cấp đủ ≥60% đề các Level & ≥20% câu chuyên đề để mở khóa toàn bộ Level cho ${u.username}!`, 'success');
           }
           return;
         }

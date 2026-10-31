@@ -117,6 +117,31 @@
       padding: 12px 20px !important;
     }
 
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #a4PrintSheetContainer,
+      #a4PrintSheetContainer * {
+        visibility: visible !important;
+      }
+      #a4PrintSheetContainer {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 12mm !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col text-slate-900 selection:bg-indigo-600 selection:text-white relative">
@@ -215,6 +240,10 @@
 
       <!-- Real-Time Clock, Dedicated Activation Button & User Account Status -->
       <div class="flex items-center gap-2 shrink-0">
+        <div id="headerCloudSyncBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-sky-50 border border-sky-300 text-[11px] font-extrabold text-sky-900 cursor-pointer hover:bg-sky-100 transition" title="Đồng bộ Đám mây Đa thiết bị (Nhấn để đồng bộ ngay)">
+          <span id="headerCloudSyncDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="headerCloudSyncText">☁️ Đa thiết bị: Online</span>
+        </div>
         <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs font-mono font-bold text-emerald-900" title="Thời gian thực hệ thống">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           <span id="headerRealtimeClock">--/--/---- --:--:--</span>
@@ -259,6 +288,11 @@
           <button data-nav="topic-room" class="nav-tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-800 hover:text-indigo-700 hover:bg-indigo-50 flex items-center justify-start gap-3 whitespace-nowrap text-left">
             <span class="w-5 text-center shrink-0">📚</span>
             <span>Phòng Chuyên Đề</span>
+          </button>
+          <button data-nav="mistake-notebook" class="nav-tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-800 hover:text-rose-700 hover:bg-rose-50 flex items-center justify-start gap-3 whitespace-nowrap text-left">
+            <span class="w-5 text-center shrink-0">📕</span>
+            <span>Sổ Tay Câu Sai</span>
+            <span id="mistakeCountSidebarBadge" class="ml-auto px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-extrabold">0</span>
           </button>
           <button data-nav="math-lab" class="nav-tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-800 hover:text-indigo-700 hover:bg-indigo-50 flex items-center justify-start gap-3 whitespace-nowrap text-left">
             <span class="w-5 text-center shrink-0">🔬</span>
@@ -522,6 +556,10 @@
                 <span>← Chọn Đề Khác (25 Đề)</span>
               </button>
                     <button type="button" id="toggleExamFullscreenBtn" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>🖥️</span> <span class="fullscreen-btn-label">Toàn Màn Hình</span></button>
+                    <button type="button" id="openScratchpadFromExamBtn" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>📝</span> <span>Bảng Nháp</span></button>
+                    <button type="button" id="openCasioFromExamBtn" class="px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>🖩</span> <span>Máy Tính FX</span></button>
+                    <button type="button" id="openPrintA4FromExamBtn" class="px-3 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>🖨️</span> <span>In Đề / Xuất PDF A4</span></button>
+                    <span id="antiCheatStatusBadge" class="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 text-[11px] font-extrabold flex items-center gap-1" title="Chế độ giám sát chống gian lận trong 90 phút làm bài">🛡️ Giám sát: 0/3 lần rời tab</span>
               <span id="examRoomCodeBadge" class="px-2.5 py-0.5 rounded-md bg-indigo-600 text-white text-xs font-bold">ĐỀ SỐ 01</span>
               <span id="examRoomLevelBadge" class="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-xs font-bold">Level 1 • Cơ bản</span>
               <span id="examRoomYearBadge" class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-semibold">Năm 2026</span>
@@ -705,6 +743,8 @@
                   ← Đổi Chuyên Đề Khác (10 Chuyên Đề)
                 </button>
                 <button type="button" id="toggleTopicFullscreenBtn" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>🖥️</span> <span class="fullscreen-btn-label">Toàn Màn Hình</span></button>
+                <button type="button" id="openScratchpadFromTopicBtn" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>📝</span> <span>Bảng Nháp</span></button>
+                <button type="button" id="openCasioFromTopicBtn" class="px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1"><span>🖩</span> <span>Máy Tính FX</span></button>
                 <span id="activeTopicCodeBadge" class="px-2.5 py-0.5 rounded bg-indigo-600 text-white text-xs font-bold">CHUYÊN ĐỀ 1</span>
                 <span id="activeTopicCountBadge" class="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">80 Câu Phân Loại</span>
               </div>
@@ -755,6 +795,188 @@
         </div>
       </div>
     </section>
+
+        <!-- ==================== VIEW 2.5: SỔ TAY CÂU SAI & LUYỆN LẠI THÔNG MINH (MISTAKE NOTEBOOK) ==================== -->
+    <section id="view-mistake-notebook" class="hidden space-y-5">
+      <div class="bg-white rounded-2xl p-5 sm:p-6 border-2 border-rose-200 shadow-md space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-600 text-white text-xs font-extrabold">
+              <span>📕 SỔ TAY CÂU SAI & THUẬT TOÁN LUYỆN LẠI ĐỔI SỐ</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Kho Lưu Trữ Câu Sai & Khắc Phục Lỗ Hổng Kiến Thức</h2>
+            <p class="text-xs sm:text-sm text-slate-600">
+              Tự động thu thập mọi câu bạn làm sai ở <strong>Phòng Thi</strong> và <strong>Phòng Chuyên Đề</strong>. Bấm <strong>"🎲 Sinh Câu Tương Tự Đổi Số"</strong> và giải đúng để xóa lỗi!
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <select id="mistakeFilterSelect" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-extrabold text-slate-800">
+              <option value="all">Tất cả câu sai</option>
+              <option value="pending">⚠️ Chưa khắc phục</option>
+              <option value="resolved">✓ Đã khắc phục thành công</option>
+              <option value="grade8">Khối Lớp 8</option>
+              <option value="grade9">Khối Lớp 9</option>
+            </select>
+            <button type="button" id="clearResolvedMistakesBtn" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-bold text-xs border border-slate-200 transition">
+              🗑️ Xóa các câu đã khắc phục
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Summary of Mistakes -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+            <div class="text-xs font-bold text-rose-800 uppercase">Câu sai cần khắc phục</div>
+            <div id="kpiMistakePending" class="text-2xl font-extrabold text-rose-700 mt-0.5">0</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="text-xs font-bold text-emerald-800 uppercase">Đã luyện lại & xóa lỗi</div>
+            <div id="kpiMistakeResolved" class="text-2xl font-extrabold text-emerald-700 mt-0.5">0</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200">
+            <div class="text-xs font-bold text-indigo-800 uppercase">Tỉ lệ khắc phục lỗ hổng</div>
+            <div id="kpiMistakeRate" class="text-2xl font-extrabold text-indigo-700 mt-0.5">100%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mistake Cards List -->
+      <div id="mistakeNotebookListContainer" class="space-y-4"></div>
+    </section>
+
+    <!-- ==================== FLOATING SCRATCHPAD (BẢNG NHÁP VẼ TAY TOÁN HỌC) ==================== -->
+    <div id="floatingScratchpadModal" class="hidden fixed bottom-4 right-4 z-50 w-[95vw] sm:w-[480px] bg-white rounded-3xl border-2 border-emerald-500 shadow-2xl overflow-hidden">
+      <div class="px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2 font-extrabold text-xs sm:text-sm">
+          <span>📝 BẢNG NHÁP TOÁN HỌC & VẼ HÌNH PHỤ</span>
+        </div>
+        <button type="button" id="closeScratchpadModalBtn" class="w-7 h-7 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-xs flex items-center justify-center">✕</button>
+      </div>
+      <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5">
+          <button type="button" data-scratch-color="#0f172a" class="scratch-color-btn w-6 h-6 rounded-full bg-slate-900 ring-2 ring-offset-1 ring-emerald-500" title="Bút Đen"></button>
+          <button type="button" data-scratch-color="#2563eb" class="scratch-color-btn w-6 h-6 rounded-full bg-blue-600" title="Bút Xanh"></button>
+          <button type="button" data-scratch-color="#dc2626" class="scratch-color-btn w-6 h-6 rounded-full bg-red-600" title="Bút Đỏ (Vẽ đường phụ)"></button>
+          <button type="button" data-scratch-color="#ffffff" class="scratch-color-btn px-2 py-1 rounded-lg bg-white border border-slate-300 font-bold text-[11px] text-slate-700" title="Tẩy">🧼 Tẩy</button>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button type="button" id="toggleScratchGridBtn" class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold text-[11px]">📐 Nền Ô Ly / Oxy</button>
+          <button type="button" id="clearScratchpadBtn" class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 font-bold text-[11px] hover:bg-rose-200">🗑️ Xóa nháp</button>
+        </div>
+      </div>
+      <div class="p-2 bg-white flex justify-center">
+        <canvas id="scratchpadCanvas" width="450" height="290" class="border border-slate-200 rounded-xl cursor-crosshair touch-none max-w-full"></canvas>
+      </div>
+    </div>
+
+    <!-- ==================== FLOATING CASIO FX SCIENTIFIC CALCULATOR ==================== -->
+    <div id="floatingCasioModal" class="hidden fixed bottom-4 left-4 z-50 w-[95vw] sm:w-[420px] bg-white rounded-3xl border-2 border-sky-500 shadow-2xl overflow-hidden">
+      <div class="px-4 py-3 bg-gradient-to-r from-slate-900 via-indigo-950 to-sky-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2 font-extrabold text-xs sm:text-sm">
+          <span>🖩 MÁY TÍNH KHOA HỌC CASIO FX-580VN X</span>
+        </div>
+        <button type="button" id="closeCasioModalBtn" class="w-7 h-7 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-xs flex items-center justify-center">✕</button>
+      </div>
+      <!-- Calculator Mode Tabs -->
+      <div class="grid grid-cols-4 gap-1 p-2 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold">
+        <button type="button" data-casio-tab="expr" class="casio-tab-btn py-1.5 px-1 rounded-lg bg-sky-600 text-white">1. Biểu thức</button>
+        <button type="button" data-casio-tab="quad" class="casio-tab-btn py-1.5 px-1 rounded-lg bg-white text-slate-700">2. PT Bậc 2</button>
+        <button type="button" data-casio-tab="sys" class="casio-tab-btn py-1.5 px-1 rounded-lg bg-white text-slate-700">3. Hệ PT 2 ẩn</button>
+        <button type="button" data-casio-tab="div" class="casio-tab-btn py-1.5 px-1 rounded-lg bg-white text-slate-700">4. Tìm Ước Ư(n)</button>
+      </div>
+
+      <!-- Mode 1: Expression Evaluator -->
+      <div id="casioTabExpr" class="p-3.5 space-y-2.5">
+        <div class="p-2.5 rounded-xl bg-emerald-950 text-emerald-300 font-mono">
+          <input id="casioExprInput" type="text" value="" placeholder="VD: (sqrt(25)+3)/(5-2)" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none" />
+          <div id="casioExprResult" class="text-right text-lg font-extrabold text-amber-300 mt-1">= 0</div>
+        </div>
+        <div class="grid grid-cols-5 gap-1.5 text-xs font-extrabold">
+          <button type="button" data-casio-key="sqrt(" class="py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-indigo-800">√(</button>
+          <button type="button" data-casio-key="^2" class="py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-indigo-800">x²</button>
+          <button type="button" data-casio-key="(" class="py-2 rounded-lg bg-slate-100 hover:bg-slate-200">(</button>
+          <button type="button" data-casio-key=")" class="py-2 rounded-lg bg-slate-100 hover:bg-slate-200">)</button>
+          <button type="button" data-casio-key="CLR" class="py-2 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800">AC</button>
+          <button type="button" data-casio-key="7" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">7</button>
+          <button type="button" data-casio-key="8" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">8</button>
+          <button type="button" data-casio-key="9" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">9</button>
+          <button type="button" data-casio-key="/" class="py-2 rounded-lg bg-indigo-50 text-indigo-800">÷</button>
+          <button type="button" data-casio-key="DEL" class="py-2 rounded-lg bg-amber-100 text-amber-900">DEL</button>
+          <button type="button" data-casio-key="4" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">4</button>
+          <button type="button" data-casio-key="5" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">5</button>
+          <button type="button" data-casio-key="6" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">6</button>
+          <button type="button" data-casio-key="*" class="py-2 rounded-lg bg-indigo-50 text-indigo-800">×</button>
+          <button type="button" data-casio-key="pi" class="py-2 rounded-lg bg-slate-100 text-indigo-800">π</button>
+          <button type="button" data-casio-key="1" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">1</button>
+          <button type="button" data-casio-key="2" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">2</button>
+          <button type="button" data-casio-key="3" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">3</button>
+          <button type="button" data-casio-key="-" class="py-2 rounded-lg bg-indigo-50 text-indigo-800">−</button>
+          <button type="button" data-casio-key="0" class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">0</button>
+          <button type="button" data-casio-key="." class="py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">.</button>
+          <button type="button" data-casio-key="+" class="py-2 rounded-lg bg-indigo-50 text-indigo-800">+</button>
+          <button type="button" data-casio-key="=" class="col-span-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-extrabold">= Tính Kết Quả</button>
+        </div>
+      </div>
+
+      <!-- Mode 2: Quadratic Equation Solver ax^2 + bx + c = 0 -->
+      <div id="casioTabQuad" class="hidden p-3.5 space-y-2.5 text-xs">
+        <div class="font-extrabold text-slate-800">Giải phương trình bậc hai $ax^2 + bx + c = 0$:</div>
+        <div class="grid grid-cols-3 gap-2">
+          <div><label class="font-bold text-slate-600">Hệ số a:</label><input id="casioQuadA" type="number" value="1" class="w-full px-2 py-1.5 rounded border border-slate-300 font-mono font-bold" /></div>
+          <div><label class="font-bold text-slate-600">Hệ số b:</label><input id="casioQuadB" type="number" value="-5" class="w-full px-2 py-1.5 rounded border border-slate-300 font-mono font-bold" /></div>
+          <div><label class="font-bold text-slate-600">Hệ số c:</label><input id="casioQuadC" type="number" value="6" class="w-full px-2 py-1.5 rounded border border-slate-300 font-mono font-bold" /></div>
+        </div>
+        <button type="button" id="solveCasioQuadBtn" class="w-full py-2 rounded-xl bg-sky-600 text-white font-extrabold">Bấm Nghiệm & Vi-ét</button>
+        <div id="casioQuadOutput" class="p-2.5 rounded-xl bg-slate-100 font-mono text-xs text-slate-900 space-y-1">Δ = 1 > 0 ⇒ x₁ = 3; x₂ = 2 (S = 5, P = 6)</div>
+      </div>
+
+      <!-- Mode 3: 2x2 Linear System Solver -->
+      <div id="casioTabSys" class="hidden p-3.5 space-y-2.5 text-xs">
+        <div class="font-extrabold text-slate-800">Giải hệ $egin{cases} a_1x + b_1y = c_1 \ a_2x + b_2y = c_2 \end{cases}$:</div>
+        <div class="grid grid-cols-3 gap-1.5">
+          <input id="casioSysA1" type="number" value="1" placeholder="a1" class="px-2 py-1 rounded border font-mono" />
+          <input id="casioSysB1" type="number" value="1" placeholder="b1" class="px-2 py-1 rounded border font-mono" />
+          <input id="casioSysC1" type="number" value="300" placeholder="c1" class="px-2 py-1 rounded border font-mono" />
+          <input id="casioSysA2" type="number" value="0.1" step="any" placeholder="a2" class="px-2 py-1 rounded border font-mono" />
+          <input id="casioSysB2" type="number" value="0.15" step="any" placeholder="b2" class="px-2 py-1 rounded border font-mono" />
+          <input id="casioSysC2" type="number" value="36" step="any" placeholder="c2" class="px-2 py-1 rounded border font-mono" />
+        </div>
+        <button type="button" id="solveCasioSysBtn" class="w-full py-2 rounded-xl bg-sky-600 text-white font-extrabold">Bấm Nghiệm Hệ (x; y)</button>
+        <div id="casioSysOutput" class="p-2.5 rounded-xl bg-slate-100 font-mono text-xs text-slate-900">Nghiệm: x = 180 ; y = 120</div>
+      </div>
+
+      <!-- Mode 4: Integer Divisors Finder U(n) -->
+      <div id="casioTabDiv" class="hidden p-3.5 space-y-2.5 text-xs">
+        <div class="font-extrabold text-slate-800">Tìm tập hợp Ước nguyên $	ext{Ư}(n)$ (Dùng cho câu tìm $x \in \mathbb{Z}$):</div>
+        <div class="flex gap-2">
+          <input id="casioDivInput" type="number" value="6" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 font-mono font-bold" />
+          <button type="button" id="solveCasioDivBtn" class="px-4 py-1.5 rounded-lg bg-sky-600 text-white font-extrabold">Liệt kê Ước</button>
+        </div>
+        <div id="casioDivOutput" class="p-2.5 rounded-xl bg-slate-100 font-mono text-xs text-slate-900">Ư(6) = {-6; -3; -2; -1; 1; 2; 3; 6}</div>
+      </div>
+    </div>
+
+    <!-- ==================== A4 OFFICIAL EXAM PRINT / PDF EXPORT MODAL ==================== -->
+    <div id="printExamModalBackdrop" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-3xl max-w-4xl w-full p-5 sm:p-7 border-2 border-indigo-200 shadow-2xl space-y-4 my-auto max-h-[92vh] flex flex-col">
+        <div class="no-print flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-xs">🖨️ XUẤT BẢN IN ĐỀ THI CHUẨN SỞ HÀ NỘI (KHỔ A4 / PDF)</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="printModeBlankBtn" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-extrabold text-xs">📄 1. Bản Đề Trắng (Để làm bài)</button>
+            <button type="button" id="printModeSolutionBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-extrabold text-xs">📘 2. Bản Kèm Đáp Án & Lời Giải</button>
+            <button type="button" id="triggerBrowserPrintBtn" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-sm">🖨️ In Ngay / Lưu File PDF</button>
+            <button type="button" id="closePrintExamModalBtn" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm">✕</button>
+          </div>
+        </div>
+
+        <!-- Printable A4 Sheet Content -->
+        <div id="a4PrintSheetContainer" class="overflow-y-auto custom-scroll p-6 sm:p-8 bg-white border border-slate-300 rounded-xl space-y-5 text-slate-900">
+          <!-- Populated dynamically by buildA4PrintableExamHtml() -->
+        </div>
+      </div>
+    </div>
 
     <!-- ==================== VIEW 3: ALGORITHMIC PROBLEM GENERATOR ==================== -->
     <section id="view-algo-generator" class="hidden space-y-5">
@@ -989,14 +1211,32 @@
       <!-- ADMIN SUB-PANEL 1: ACCOUNTS OVERVIEW & INDIVIDUAL STUDENT ANALYTICS -->
       <div id="adminSubAccounts" class="space-y-5">
         <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <!-- CLOUD MULTI-DEVICE SYNC CONTROL BAR FOR ADMIN -->
+          <div class="p-3.5 rounded-2xl bg-sky-50 border-2 border-sky-200 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div class="space-y-0.5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-extrabold">☁️ CLOUD SYNC ĐA THIẾT BỊ • KHÔNG GIỚI HẠN IP / MÁY</span>
+                <span id="adminCloudLastSyncText" class="text-xs font-mono font-bold text-sky-900">Đang kết nối đám mây...</span>
+              </div>
+              <p class="text-xs text-slate-700">
+                Mọi tài khoản do học sinh tạo trên bất kỳ điện thoại, máy tính hay mạng Internet nào đều tự động đồng bộ về danh sách Admin theo thời gian thực và cho phép nhiều máy đăng nhập cùng lúc.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <button type="button" id="adminForceCloudSyncBtn" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+                <span>🔄</span> <span>Đồng Bộ Đám Mây Ngay</span>
+              </button>
+              <button id="adminCreateUserQuickBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition">
+                ➕ Tạo Tài Khoản Mới
+              </button>
+            </div>
+          </div>
+
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Danh Sách Toàn Bộ Tài Khoản & Tiến Độ Học Tập Trong Hệ Thống</h3>
               <p class="text-xs text-slate-500">Nhấn <strong>"🔍 Xem Phân Tích Chi Tiết"</strong> ở bất kỳ tài khoản nào để kiểm tra toàn bộ lịch sử đề đã làm, điểm từng bài và tiến độ chuyên đề.</p>
             </div>
-            <button id="adminCreateUserQuickBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition self-start sm:self-center">
-              ➕ Tạo Tài Khoản Mới
-            </button>
           </div>
 
           <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -9848,6 +10088,1630 @@
 
       document.getElementById('toggleExamFullscreenBtn')?.addEventListener('click', () => toggleWorkspaceFullscreen());
       document.getElementById('toggleTopicFullscreenBtn')?.addEventListener('click', () => toggleWorkspaceFullscreen());
+    });
+
+
+    // ============================================================================
+    // 18. V12 MULTI-DEVICE REALTIME CLOUD SYNC ENGINE (CRDT MERGE ACROSS ALL IPs/DEVICES)
+    // ============================================================================
+    const CLOUD_SYNC_CONFIG = {
+      topicName: 'hanoimath10_pro_cloud_duytam939_v12_prod',
+      baseUrl: 'https://ntfy.sh',
+      deviceId: (() => {
+        try {
+          let id = localStorage.getItem('hanoimath10_device_id_v12');
+          if (!id) {
+            id = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            localStorage.setItem('hanoimath10_device_id_v12', id);
+          }
+          return id;
+        } catch (e) {
+          return 'DEV-SESSION';
+        }
+      })(),
+      sseSource: null,
+      isSyncing: false,
+      lastSyncTime: null,
+      deletedCodeMap: {} // Tombstones for deleted activation codes
+    };
+
+    // BroadcastChannel for 0ms instant sync across multiple tabs on the same browser
+    let localBroadcastChannel = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        localBroadcastChannel = new BroadcastChannel('hanoimath10_multi_device_channel_v12');
+        localBroadcastChannel.onmessage = (ev) => {
+          if (ev && ev.data) {
+            mergeIncomingCloudPacket(ev.data, false);
+          }
+        };
+      }
+    } catch (e) {}
+
+    window.addEventListener('storage', (ev) => {
+      if (ev.key === 'hanoimath10_accounts_v7' || ev.key === 'hanoimath10_codes_v7') {
+        try {
+          const rawAcc = localStorage.getItem('hanoimath10_accounts_v7');
+          const rawCodes = localStorage.getItem('hanoimath10_codes_v7');
+          if (rawAcc) mergeIncomingCloudPacket({ type: 'full_sync', accounts: JSON.parse(rawAcc), codes: rawCodes ? JSON.parse(rawCodes) : [] }, false);
+        } catch (e) {}
+      }
+    });
+
+    function updateCloudSyncUIStatus(statusText, isOnline = true) {
+      const dot = document.getElementById('headerCloudSyncDot');
+      const txt = document.getElementById('headerCloudSyncText');
+      const admTxt = document.getElementById('adminCloudLastSyncText');
+      const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      if (dot) {
+        dot.className = isOnline ? 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse' : 'w-2 h-2 rounded-full bg-amber-500';
+      }
+      if (txt) {
+        txt.textContent = `☁️ Đa thiết bị (${authStore.accounts.length} TK)`;
+      }
+      if (admTxt) {
+        admTxt.textContent = `${statusText || 'Đã đồng bộ Cloud'} lúc ${timeStr} • Thiết bị: ${CLOUD_SYNC_CONFIG.deviceId} • Tổng: ${authStore.accounts.length} TK`;
+      }
+    }
+
+    // Compact serializer for an account so each HTTP cloud packet is < 1.8 KB (fast & reliable)
+    function serializeCompactAccount(acc) {
+      if (!acc || !acc.username) return null;
+      // Convert solved topic questions map into compact array of question numbers per topic
+      const compactTopics = {};
+      if (acc.uniqueSolvedTopicQuestions && typeof acc.uniqueSolvedTopicQuestions === 'object') {
+        Object.keys(acc.uniqueSolvedTopicQuestions).forEach(tId => {
+          const qMap = acc.uniqueSolvedTopicQuestions[tId];
+          if (qMap && typeof qMap === 'object') {
+            const keys = Object.keys(qMap).map(Number).filter(n => !isNaN(n));
+            if (keys.length > 0) compactTopics[tId] = keys;
+          }
+        });
+      }
+      return {
+        u: acc.username,
+        p: acc.password,
+        r: acc.role || 'student',
+        fn: acc.fullName || acc.username,
+        act: Boolean(acc.isActivated),
+        sc: Array.isArray(acc.unlockedScopes) ? acc.unlockedScopes : (acc.isActivated ? [...ALL_COURSE_SCOPE_IDS] : []),
+        code: acc.activationCodeUsed || null,
+        vf: acc.validFrom || null,
+        vu: acc.validUntil || null,
+        upd: acc.updatedAt || 1,
+        admUpd: acc.adminUpdatedAt || 0,
+        exDone: acc.uniqueExamsDone || {},
+        hist: (acc.examHistory || []).slice(0, 10),
+        tpDone: compactTopics
+      };
+    }
+
+    function expandCompactAccount(c) {
+      if (!c) return null;
+      // Support both already-expanded account objects and compact serialized objects
+      if (c.username) {
+        return c;
+      }
+      if (!c.u) return null;
+      const expandedTopics = createInitialSolvedMap(c.r === 'admin' && c.u === 'duytam939');
+      MASTERY_TOPICS_G8_META.forEach(t8 => {
+        if (!expandedTopics[t8.id]) expandedTopics[t8.id] = {};
+      });
+      if (c.tpDone && typeof c.tpDone === 'object') {
+        Object.keys(c.tpDone).forEach(tId => {
+          if (!expandedTopics[tId]) expandedTopics[tId] = {};
+          const arr = c.tpDone[tId];
+          if (Array.isArray(arr)) {
+            arr.forEach(qNum => { expandedTopics[tId][qNum] = true; });
+          }
+        });
+      }
+      return {
+        username: c.u,
+        password: c.p,
+        role: c.r || 'student',
+        fullName: c.fn || c.u,
+        isActivated: Boolean(c.act),
+        unlockedScopes: Array.isArray(c.sc) ? c.sc : [],
+        activationCodeUsed: c.code || null,
+        validFrom: c.vf || null,
+        validUntil: c.vu || null,
+        updatedAt: c.upd || 1,
+        adminUpdatedAt: c.admUpd || 0,
+        uniqueExamsDone: c.exDone || {},
+        examHistory: Array.isArray(c.hist) ? c.hist : [],
+        uniqueSolvedTopicQuestions: expandedTopics
+      };
+    }
+
+    // Conflict-free CRDT merge of a single account into authStore.accounts
+    function mergeSingleAccountIntoStore(incomingRaw) {
+      const inc = expandCompactAccount(incomingRaw);
+      if (!inc || !inc.username) return false;
+      const existing = authStore.accounts.find(a => a.username.toLowerCase() === inc.username.toLowerCase());
+      if (!existing) {
+        authStore.accounts.push(inc);
+        return true;
+      }
+
+      let changed = false;
+      // If incoming has newer timestamp or admin override
+      const incUpd = inc.updatedAt || 1;
+      const exUpd = existing.updatedAt || 0;
+      const incAdm = inc.adminUpdatedAt || 0;
+      const exAdm = existing.adminUpdatedAt || 0;
+
+      if (existing.username !== 'duytam939') {
+        if (incUpd >= exUpd) {
+          if (inc.password && existing.password !== inc.password) { existing.password = inc.password; changed = true; }
+          if (inc.fullName && existing.fullName !== inc.fullName) { existing.fullName = inc.fullName; changed = true; }
+          existing.updatedAt = Math.max(exUpd, incUpd);
+        }
+        // Scope & Activation merging: if Admin explicitly modified scopes more recently, use Admin's scopes; otherwise union!
+        if (incAdm > exAdm) {
+          existing.unlockedScopes = Array.isArray(inc.unlockedScopes) ? [...inc.unlockedScopes] : [];
+          existing.isActivated = Boolean(inc.isActivated);
+          existing.adminUpdatedAt = incAdm;
+          if (inc.activationCodeUsed) existing.activationCodeUsed = inc.activationCodeUsed;
+          if (inc.validFrom !== undefined) existing.validFrom = inc.validFrom;
+          if (inc.validUntil !== undefined) existing.validUntil = inc.validUntil;
+          changed = true;
+        } else if (incAdm === exAdm) {
+          const curScopes = Array.isArray(existing.unlockedScopes) ? existing.unlockedScopes : [];
+          const newScopes = Array.isArray(inc.unlockedScopes) ? inc.unlockedScopes : [];
+          newScopes.forEach(s => {
+            if (!curScopes.includes(s)) { curScopes.push(s); changed = true; }
+          });
+          existing.unlockedScopes = curScopes;
+          const nextAct = existing.unlockedScopes.length > 0 || Boolean(existing.isActivated) || Boolean(inc.isActivated);
+          if (existing.isActivated !== nextAct) { existing.isActivated = nextAct; changed = true; }
+          if (inc.activationCodeUsed && !existing.activationCodeUsed) { existing.activationCodeUsed = inc.activationCodeUsed; changed = true; }
+          if (inc.validFrom && !existing.validFrom) { existing.validFrom = inc.validFrom; changed = true; }
+          if (inc.validUntil && !existing.validUntil) { existing.validUntil = inc.validUntil; changed = true; }
+        }
+      }
+
+      // Merge uniqueExamsDone (keep highest score per exam)
+      if (!existing.uniqueExamsDone) existing.uniqueExamsDone = {};
+      if (inc.uniqueExamsDone && typeof inc.uniqueExamsDone === 'object') {
+        Object.keys(inc.uniqueExamsDone).forEach(exId => {
+          const sc = Number(inc.uniqueExamsDone[exId]);
+          if (!isNaN(sc) && (existing.uniqueExamsDone[exId] === undefined || sc > existing.uniqueExamsDone[exId])) {
+            existing.uniqueExamsDone[exId] = sc;
+            changed = true;
+          }
+        });
+      }
+
+      // Merge examHistory by attempt id
+      if (!Array.isArray(existing.examHistory)) existing.examHistory = [];
+      if (Array.isArray(inc.examHistory)) {
+        const seenIds = new Set(existing.examHistory.map(h => h.id));
+        inc.examHistory.forEach(h => {
+          if (h && h.id && !seenIds.has(h.id)) {
+            existing.examHistory.unshift(h);
+            seenIds.add(h.id);
+            changed = true;
+          }
+        });
+      }
+
+      // Merge uniqueSolvedTopicQuestions (union of solved questions)
+      if (!existing.uniqueSolvedTopicQuestions) existing.uniqueSolvedTopicQuestions = {};
+      if (inc.uniqueSolvedTopicQuestions && typeof inc.uniqueSolvedTopicQuestions === 'object') {
+        Object.keys(inc.uniqueSolvedTopicQuestions).forEach(tId => {
+          if (!existing.uniqueSolvedTopicQuestions[tId]) existing.uniqueSolvedTopicQuestions[tId] = {};
+          const mapIn = inc.uniqueSolvedTopicQuestions[tId];
+          if (mapIn && typeof mapIn === 'object') {
+            Object.keys(mapIn).forEach(qKey => {
+              if (!existing.uniqueSolvedTopicQuestions[tId][qKey]) {
+                existing.uniqueSolvedTopicQuestions[tId][qKey] = true;
+                changed = true;
+              }
+            });
+          }
+        });
+      }
+
+      return changed;
+    }
+
+    // Merge incoming activation codes
+    function mergeCodesIntoStore(incomingCodes, deletedCodesList) {
+      let changed = false;
+      if (Array.isArray(deletedCodesList)) {
+        deletedCodesList.forEach(delCode => {
+          if (delCode) {
+            CLOUD_SYNC_CONFIG.deletedCodeMap[delCode.toUpperCase()] = true;
+            const idx = authStore.codes.findIndex(c => c.code.toUpperCase() === delCode.toUpperCase());
+            if (idx >= 0) {
+              authStore.codes.splice(idx, 1);
+              changed = true;
+            }
+          }
+        });
+      }
+      if (!Array.isArray(incomingCodes)) return changed;
+      incomingCodes.forEach(inc => {
+        if (!inc || !inc.code) return;
+        const upper = inc.code.toUpperCase();
+        if (CLOUD_SYNC_CONFIG.deletedCodeMap[upper]) return;
+        const ex = authStore.codes.find(c => c.code.toUpperCase() === upper);
+        if (!ex) {
+          authStore.codes.unshift({
+            code: inc.code,
+            note: inc.note || '',
+            scopes: Array.isArray(inc.scopes) && inc.scopes.length > 0 ? inc.scopes : [...ALL_COURSE_SCOPE_IDS],
+            maxUses: inc.maxUses || 30,
+            usedBy: Array.isArray(inc.usedBy) ? inc.usedBy : [],
+            startTime: inc.startTime || '',
+            expireTime: inc.expireTime || '',
+            createdAt: inc.createdAt || ''
+          });
+          changed = true;
+        } else {
+          if (!Array.isArray(ex.usedBy)) ex.usedBy = [];
+          (inc.usedBy || []).forEach(u => {
+            if (u && !ex.usedBy.includes(u)) {
+              ex.usedBy.push(u);
+              changed = true;
+            }
+          });
+        }
+      });
+      return changed;
+    }
+
+    function mergeIncomingCloudPacket(packet, shouldSave = true) {
+      if (!packet || typeof packet !== 'object') return false;
+      let anyChanged = false;
+
+      if (packet.account) {
+        if (mergeSingleAccountIntoStore(packet.account)) anyChanged = true;
+      }
+      if (Array.isArray(packet.accounts)) {
+        packet.accounts.forEach(a => {
+          if (mergeSingleAccountIntoStore(a)) anyChanged = true;
+        });
+      }
+      if (Array.isArray(packet.codes) || Array.isArray(packet.deletedCodes)) {
+        if (mergeCodesIntoStore(packet.codes, packet.deletedCodes)) anyChanged = true;
+      }
+
+      if (anyChanged) {
+        syncCurrentUserToAppState();
+        if (shouldSave) _v8SaveAuthStore();
+        refreshAuthAndRoleUI();
+        if (isCurrentUserAdmin()) renderAdminDashboard();
+      }
+      updateCloudSyncUIStatus('Đồng bộ thời gian thực');
+      return anyChanged;
+    }
+
+    // Push a compact packet to the global cloud channel + BroadcastChannel
+    async function pushCloudPacket(packetPayload) {
+      const payload = {
+        ...packetPayload,
+        senderDevice: CLOUD_SYNC_CONFIG.deviceId,
+        ts: Date.now()
+      };
+      try {
+        if (localBroadcastChannel) localBroadcastChannel.postMessage(payload);
+      } catch (e) {}
+
+      try {
+        await fetch(`https://ntfy.sh/${CLOUD_SYNC_CONFIG.topicName}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify(payload)
+        });
+        updateCloudSyncUIStatus('Đã đẩy dữ liệu lên Cloud', true);
+      } catch (e) {
+        updateCloudSyncUIStatus('Chế độ bộ nhớ cục bộ', false);
+      }
+    }
+
+    // Push a specific account immediately (called on register, activate, exam submit, topic solve, admin toggle)
+    async function syncSingleAccountToCloud(username) {
+      const acc = authStore.accounts.find(a => a.username.toLowerCase() === (username || '').toLowerCase());
+      if (!acc) return;
+      acc.updatedAt = Date.now();
+      _v8SaveAuthStore();
+      await pushCloudPacket({
+        type: 'account_upsert',
+        account: serializeCompactAccount(acc)
+      });
+    }
+
+    // Push all non-default accounts & codes to cloud in compact form
+    async function pushAllAccountsAndCodesToCloud() {
+      // Push codes packet
+      await pushCloudPacket({
+        type: 'codes_sync',
+        codes: authStore.codes.slice(0, 25),
+        deletedCodes: Object.keys(CLOUD_SYNC_CONFIG.deletedCodeMap)
+      });
+      // Push each account in chunks of 4 accounts per packet so each packet stays < 2KB
+      const compactAccs = authStore.accounts.map(serializeCompactAccount).filter(Boolean);
+      for (let i = 0; i < compactAccs.length; i += 4) {
+        await pushCloudPacket({
+          type: 'accounts_batch',
+          accounts: compactAccs.slice(i, i + 4)
+        });
+      }
+    }
+
+    // Pull all cached packets from the global cloud channel
+    async function pullCloudState(showNotification = false) {
+      if (CLOUD_SYNC_CONFIG.isSyncing) return;
+      CLOUD_SYNC_CONFIG.isSyncing = true;
+      try {
+        const res = await fetch(`https://ntfy.sh/${CLOUD_SYNC_CONFIG.topicName}/json?poll=1&since=all`, {
+          cache: 'no-store'
+        });
+        if (res.ok) {
+          const text = await res.text();
+          const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+          let mergedCount = 0;
+          lines.forEach(line => {
+            try {
+              const env = JSON.parse(line);
+              if (env && env.event === 'message' && typeof env.message === 'string') {
+                const inner = JSON.parse(env.message);
+                if (mergeIncomingCloudPacket(inner, false)) mergedCount++;
+              }
+            } catch (innerErr) {}
+          });
+          _v8SaveAuthStore();
+          syncCurrentUserToAppState();
+          refreshAuthAndRoleUI();
+          if (isCurrentUserAdmin()) renderAdminDashboard();
+          updateCloudSyncUIStatus('Đã đồng bộ Cloud', true);
+          if (showNotification) {
+            showToast(`☁️ Đã đồng bộ đám mây thành công! Tổng số tài khoản trên hệ thống: ${authStore.accounts.length}.`, 'success');
+          }
+        }
+      } catch (e) {
+        updateCloudSyncUIStatus('Đang chờ kết nối mạng', false);
+      } finally {
+        CLOUD_SYNC_CONFIG.isSyncing = false;
+      }
+    }
+
+    // Open real-time SSE listener so Admin and logged-in devices receive updates in < 1 second
+    function startRealtimeCloudStream() {
+      try {
+        if (CLOUD_SYNC_CONFIG.sseSource) {
+          CLOUD_SYNC_CONFIG.sseSource.close();
+        }
+        const es = new EventSource(`${CLOUD_SYNC_CONFIG.baseUrl}/${CLOUD_SYNC_CONFIG.topicName}/sse`);
+        CLOUD_SYNC_CONFIG.sseSource = es;
+        es.onmessage = (ev) => {
+          try {
+            if (!ev || !ev.data) return;
+            const env = JSON.parse(ev.data);
+            const msgStr = (env && env.event === 'message' && env.message) ? env.message : ev.data;
+            const packet = JSON.parse(msgStr);
+            if (packet && packet.senderDevice !== CLOUD_SYNC_CONFIG.deviceId) {
+              mergeIncomingCloudPacket(packet, true);
+            }
+          } catch (err) {}
+        };
+        es.onerror = () => {
+          // Will automatically reconnect; also fallback polling runs every 6 seconds
+        };
+      } catch (e) {}
+
+      // Periodic background poll every 6 seconds to guarantee consistency across all networks/firewalls
+      setInterval(() => {
+        pullCloudState(false);
+      }, 6000);
+    }
+
+    // ------------------------------------------------------------------------
+    // HOOK CLOUD SYNC INTO REGISTRATION, MULTI-DEVICE LOGIN, ACTIVATION & ADMIN
+    // ------------------------------------------------------------------------
+    // 1. Intercept Login so if an account was just created on another device/IP, we pull from Cloud before checking!
+    document.addEventListener('click', async (e) => {
+      const loginBtn = e.target.closest('#submitLoginBtn');
+      if (loginBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const u = (document.getElementById('loginUsernameInput')?.value || '').trim();
+        const p = (document.getElementById('loginPasswordInput')?.value || '').trim();
+        if (!u || !p) {
+          showToast('Vui lòng nhập đầy đủ Tên tài khoản và Mật khẩu!', 'warning');
+          return;
+        }
+        let found = authStore.accounts.find(a => a.username.toLowerCase() === u.toLowerCase() && a.password === p);
+        if (!found) {
+          // Pull latest accounts from Cloud in case this account was created on another machine!
+          loginBtn.disabled = true;
+          const origText = loginBtn.innerHTML;
+          loginBtn.innerHTML = '☁️ Đang đồng bộ tài khoản từ đám mây...';
+          await pullCloudState(false);
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = origText;
+          found = authStore.accounts.find(a => a.username.toLowerCase() === u.toLowerCase() && a.password === p);
+        }
+        if (!found) {
+          showToast('Sai tên tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại.', 'warning');
+          return;
+        }
+        authStore.currentUsername = found.username;
+        authStore.isAuthenticated = true;
+        if (document.getElementById('rememberCredentialsCheckbox')?.checked !== false) {
+          rememberUserCredential(found.username, found.password, found.role);
+        } else {
+          renderSavedCredentialsList();
+        }
+        syncCurrentUserToAppState();
+        saveAuthStore();
+        document.getElementById('authModalBackdrop')?.classList.add('hidden');
+        switchView('home-dashboard');
+        refreshAuthAndRoleUI();
+        // Sync account status to cloud
+        syncSingleAccountToCloud(found.username);
+        if (found.role === 'admin') {
+          pullCloudState(false);
+          showToast('👑 Đã đăng nhập Admin với đồng bộ Đám mây Đa thiết bị!', 'success');
+        } else {
+          showToast(`☁️ Đã đăng nhập tài khoản "${found.username}" (Hỗ trợ đồng bộ đa thiết bị)!`, 'success');
+        }
+        return;
+      }
+
+      // 2. Intercept Register so newly created account is immediately pushed to Cloud for Admin & other devices!
+      const regBtn = e.target.closest('#submitRegisterBtn');
+      if (regBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const u = (document.getElementById('regUsernameInput')?.value || '').trim();
+        const p = (document.getElementById('regPasswordInput')?.value || '').trim();
+        const fn = (document.getElementById('regFullNameInput')?.value || '').trim() || u;
+        const codeStr = (document.getElementById('regActivationCodeInput')?.value || '').trim().toUpperCase();
+
+        if (!u || !p) {
+          showToast('Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!', 'warning');
+          return;
+        }
+        // Pull latest cloud state first to check if username was taken or if a new activation code was created by Admin
+        regBtn.disabled = true;
+        const origRegText = regBtn.innerHTML;
+        regBtn.innerHTML = '☁️ Đang tạo & đồng bộ tài khoản lên hệ thống...';
+        await pullCloudState(false);
+        regBtn.disabled = false;
+        regBtn.innerHTML = origRegText;
+
+        if (authStore.accounts.some(a => a.username.toLowerCase() === u.toLowerCase())) {
+          showToast('Tên tài khoản này đã tồn tại trên hệ thống! Bạn có thể chuyển sang tab Đăng Nhập để vào tài khoản này.', 'warning');
+          return;
+        }
+
+        let activated = false;
+        let usedCode = null;
+        let unlockedScopes = [];
+        let validFrom = null;
+        let validUntil = null;
+        if (codeStr) {
+          const cObj = authStore.codes.find(c => c.code.toUpperCase() === codeStr);
+          const rtWin = cObj ? evaluateRealtimeWindow(cObj.startTime, cObj.expireTime) : { valid: false };
+          if (cObj && rtWin.valid && (cObj.usedBy || []).length < cObj.maxUses) {
+            activated = true;
+            usedCode = cObj.code;
+            unlockedScopes = Array.isArray(cObj.scopes) && cObj.scopes.length > 0 ? [...cObj.scopes] : [...ALL_COURSE_SCOPE_IDS];
+            validFrom = cObj.startTime || null;
+            validUntil = cObj.expireTime || null;
+            if (!cObj.usedBy) cObj.usedBy = [];
+            if (!cObj.usedBy.includes(u)) cObj.usedBy.push(u);
+          } else {
+            showToast('Mã kích hoạt đính kèm không hợp lệ hoặc đã hết hạn! Tài khoản vẫn được tạo ở trạng thái chờ kích hoạt.', 'warning');
+          }
+        }
+
+        const newAcc = {
+          username: u,
+          password: p,
+          role: 'student',
+          fullName: fn,
+          isActivated: activated,
+          unlockedScopes,
+          activationCodeUsed: usedCode,
+          validFrom,
+          validUntil,
+          updatedAt: Date.now(),
+          adminUpdatedAt: 0,
+          examHistory: [],
+          uniqueExamsDone: {},
+          uniqueSolvedTopicQuestions: createInitialSolvedMap(false)
+        };
+        authStore.accounts.push(newAcc);
+        authStore.currentUsername = u;
+        authStore.isAuthenticated = true;
+        rememberUserCredential(u, p, 'student');
+        syncCurrentUserToAppState();
+        saveAuthStore();
+
+        // Immediately broadcast the newly created account to the global Cloud so Admin sees it right away!
+        await pushCloudPacket({
+          type: 'account_register',
+          account: serializeCompactAccount(newAcc),
+          codes: usedCode ? authStore.codes.filter(c => c.code === usedCode) : undefined
+        });
+
+        document.getElementById('authModalBackdrop')?.classList.add('hidden');
+        switchView('home-dashboard');
+        refreshAuthAndRoleUI();
+        showToast(activated ? `🎉 Tạo tài khoản "${u}" & đồng bộ Đám mây thành công!` : `☁️ Đã tạo tài khoản "${u}" và đồng bộ lên hệ thống Admin!`, 'success');
+        return;
+      }
+    }, true);
+
+    // 3. Wrap applyActivationCodeToAccount to sync with Cloud before & after activating
+    const _v11ApplyActivationCode = applyActivationCodeToAccount;
+    applyActivationCodeToAccount = function(targetUsername, rawCode) {
+      const ok = _v11ApplyActivationCode(targetUsername, rawCode);
+      if (ok) {
+        syncSingleAccountToCloud(targetUsername);
+        pushCloudPacket({
+          type: 'codes_sync',
+          codes: authStore.codes.slice(0, 25)
+        });
+      } else {
+        // Pull latest codes from cloud in case Admin just created this code on another device!
+        pullCloudState(false).then(() => {
+          const retryOk = _v11ApplyActivationCode(targetUsername, rawCode);
+          if (retryOk) {
+            syncSingleAccountToCloud(targetUsername);
+            pushCloudPacket({ type: 'codes_sync', codes: authStore.codes.slice(0, 25) });
+          }
+        });
+      }
+      return ok;
+    };
+
+    // 4. Wrap submitExam to push updated exam score & history to Cloud
+    const _v11SubmitExam = submitExam;
+    submitExam = function() {
+      _v11SubmitExam();
+      const acc = getCurrentAccount();
+      if (acc) {
+        syncSingleAccountToCloud(acc.username);
+      }
+    };
+
+    // 5. Hook Admin actions (toggle scope, toggle activation, grant unlock, create/delete code) to push to Cloud immediately
+    document.body.addEventListener('click', (e) => {
+      if (e.target.closest('#adminForceCloudSyncBtn') || e.target.closest('#headerCloudSyncBadge')) {
+        pushAllAccountsAndCodesToCloud().then(() => pullCloudState(true));
+        return;
+      }
+
+      const toggleScopeBtn = e.target.closest('[data-admin-toggle-scope]');
+      const toggleActBtn = e.target.closest('[data-admin-toggle-act]');
+      const grantUnlockBtn = e.target.closest('[data-admin-grant-unlock]');
+      if ((toggleScopeBtn || toggleActBtn || grantUnlockBtn) && isCurrentUserAdmin()) {
+        const uname = (toggleScopeBtn?.getAttribute('data-admin-toggle-scope')) ||
+                      (toggleActBtn?.getAttribute('data-admin-toggle-act')) ||
+                      (grantUnlockBtn?.getAttribute('data-admin-grant-unlock'));
+        setTimeout(() => {
+          const u = authStore.accounts.find(a => a.username === uname);
+          if (u) {
+            u.adminUpdatedAt = Date.now();
+            u.updatedAt = Date.now();
+            syncSingleAccountToCloud(u.username);
+          }
+        }, 50);
+      }
+
+      if (e.target.closest('#createActivationCodeBtn') && isCurrentUserAdmin()) {
+        setTimeout(() => {
+          pushCloudPacket({
+            type: 'codes_sync',
+            codes: authStore.codes.slice(0, 25)
+          });
+        }, 50);
+      }
+
+      const delCodeBtn = e.target.closest('[data-admin-del-code]');
+      if (delCodeBtn && isCurrentUserAdmin()) {
+        const cIdx = parseInt(delCodeBtn.getAttribute('data-admin-del-code'), 10);
+        const targetCodeObj = authStore.codes[cIdx];
+        if (targetCodeObj && targetCodeObj.code) {
+          CLOUD_SYNC_CONFIG.deletedCodeMap[targetCodeObj.code.toUpperCase()] = true;
+          setTimeout(() => {
+            pushCloudPacket({
+              type: 'codes_sync',
+              codes: authStore.codes.slice(0, 25),
+              deletedCodes: Object.keys(CLOUD_SYNC_CONFIG.deletedCodeMap)
+            });
+          }, 50);
+        }
+      }
+
+      // Also sync to cloud when a student submits a topic question answer
+      if (e.target.closest('[data-topic-submit-q]')) {
+        setTimeout(() => {
+          const acc = getCurrentAccount();
+          if (acc) syncSingleAccountToCloud(acc.username);
+        }, 60);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateCloudSyncUIStatus('Đang đồng bộ Cloud...', true);
+      // Pull cloud state on startup and start real-time SSE listener
+      pullCloudState(false).then(() => {
+        pushAllAccountsAndCodesToCloud();
+      });
+      startRealtimeCloudStream();
+    });
+
+
+    // ============================================================================
+    // 19. V13 ENGINE: GROUP 1 (MISTAKE NOTEBOOK & AI DIAGNOSTIC),
+    //     GROUP 2 (SCRATCHPAD CANVAS, CASIO FX, ANTI-CHEAT PROCTORING, 0.25đ RUBRIC),
+    //     GROUP 3 (INTERACTIVE GEOMETRY LAYERS a/b/c + HINTS & A4 PRINT/PDF EXPORT)
+    // ============================================================================
+
+    appState.antiCheatViolations = 0;
+    appState.rubricUserSteps = {};   // { qIdx: { step1: '', step2: '', step3: '', open: false } }
+    appState.geoLayerMode = {};      // { canvasId: 1 | 2 | 3 }
+    appState.geoHintShown = {};      // { canvasId: boolean }
+    appState.printIncludeSolutions = false;
+    appState.mistakeRetryState = {}; // { mistakeId: { problem, selectedOpt, submitted, isCorrect } }
+
+    // ------------------------------------------------------------------------
+    // GROUP 1A: MISTAKE NOTEBOOK (SỔ TAY CÂU SAI & LUYỆN LẠI ĐỔI SỐ)
+    // ------------------------------------------------------------------------
+    function ensureMistakeNotebookArray(acc) {
+      if (!acc) return [];
+      if (!Array.isArray(acc.mistakeNotebook)) acc.mistakeNotebook = [];
+      return acc.mistakeNotebook;
+    }
+
+    function recordMistakeItem(acc, item) {
+      if (!acc) return;
+      const list = ensureMistakeNotebookArray(acc);
+      // Avoid duplicate by stem signature
+      const sig = (item.stem || '').slice(0, 120);
+      const existing = list.find(m => (m.stem || '').slice(0, 120) === sig);
+      if (existing) {
+        existing.resolved = false;
+        existing.userWrongText = item.userWrongText;
+        existing.date = new Date().toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+      } else {
+        list.unshift({
+          id: 'mk-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+          grade: String(item.grade || '9'),
+          sourceTitle: item.sourceTitle || 'Phòng Luyện',
+          topicId: item.topicId || 'cd1_ab',
+          archetypeId: item.archetypeId || null,
+          stem: item.stem || '',
+          userWrongText: item.userWrongText || 'Chưa trả lời đúng',
+          correctText: item.correctText || '',
+          analysis: item.analysis || '',
+          solutionSteps: Array.isArray(item.solutionSteps) ? item.solutionSteps : [],
+          resolved: false,
+          date: new Date().toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
+        });
+      }
+      saveAuthStore();
+      updateMistakeSidebarBadge();
+    }
+
+    function updateMistakeSidebarBadge() {
+      const acc = getCurrentAccount();
+      const list = ensureMistakeNotebookArray(acc);
+      const pendingCount = list.filter(m => !m.resolved).length;
+      const badge = document.getElementById('mistakeCountSidebarBadge');
+      if (badge) {
+        badge.textContent = String(pendingCount);
+        badge.className = pendingCount > 0
+          ? 'ml-auto px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-extrabold'
+          : 'ml-auto px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold';
+      }
+    }
+
+    function renderMistakeNotebookView() {
+      const acc = getCurrentAccount();
+      const list = ensureMistakeNotebookArray(acc);
+      const filterVal = document.getElementById('mistakeFilterSelect')?.value || 'all';
+
+      const pendingCount = list.filter(m => !m.resolved).length;
+      const resolvedCount = list.filter(m => m.resolved).length;
+      const rate = list.length > 0 ? Math.round((resolvedCount / list.length) * 100) : 100;
+
+      const pEl = document.getElementById('kpiMistakePending');
+      const rEl = document.getElementById('kpiMistakeResolved');
+      const rateEl = document.getElementById('kpiMistakeRate');
+      if (pEl) pEl.textContent = String(pendingCount);
+      if (rEl) rEl.textContent = String(resolvedCount);
+      if (rateEl) rateEl.textContent = `${rate}%`;
+
+      const filtered = list.filter(m => {
+        if (filterVal === 'pending') return !m.resolved;
+        if (filterVal === 'resolved') return Boolean(m.resolved);
+        if (filterVal === 'grade8') return String(m.grade) === '8';
+        if (filterVal === 'grade9') return String(m.grade) === '9';
+        return true;
+      });
+
+      const container = document.getElementById('mistakeNotebookListContainer');
+      if (!container) return;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl p-8 border-2 border-slate-200 text-center space-y-2">
+            <div class="text-3xl">🎉</div>
+            <h3 class="text-base font-extrabold text-slate-900">Không có câu sai nào trong mục này!</h3>
+            <p class="text-xs text-slate-500">Khi bạn làm sai câu hỏi ở Phòng Thi hoặc Phòng Chuyên Đề, câu hỏi sẽ tự động được lưu vào đây để bạn ôn và luyện lại.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const letters = ['A', 'B', 'C', 'D'];
+      container.innerHTML = filtered.map((m, idx) => {
+        const retry = appState.mistakeRetryState[m.id];
+        let retryHtml = '';
+        if (retry && retry.problem) {
+          const rq = retry.problem;
+          retryHtml = `
+            <div class="mt-4 p-4 rounded-2xl bg-indigo-50/90 border-2 border-indigo-300 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded bg-indigo-600 text-white font-extrabold text-xs">🎲 BÀI TOÁN TƯƠNG TỰ ĐỔI SỐ (LÀM ĐÚNG ĐỂ XÓA LỖI)</span>
+                <button type="button" data-mistake-practice="${m.id}" class="text-xs font-extrabold text-indigo-700 hover:underline">🔄 Đổi số khác</button>
+              </div>
+              <div class="text-sm text-slate-900 bg-white p-3.5 rounded-xl border border-indigo-100 leading-relaxed">${rq.stem}</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                ${(rq.options || []).map((opt, oIdx) => {
+                  const sel = retry.selectedOpt === oIdx;
+                  let st = 'bg-white border-slate-200 text-slate-800 hover:border-indigo-400';
+                  if (retry.submitted) {
+                    if (oIdx === rq.correctIndex) st = 'bg-emerald-50 border-emerald-500 text-emerald-950 ring-2 ring-emerald-500';
+                    else if (sel) st = 'bg-rose-50 border-rose-400 text-rose-900';
+                  } else if (sel) {
+                    st = 'bg-indigo-100 border-indigo-600 text-indigo-950 ring-2 ring-indigo-600';
+                  }
+                  return `
+                    <button type="button" data-mistake-retry-opt="${m.id}" data-opt-idx="${oIdx}" class="p-3 rounded-xl border text-left text-xs sm:text-sm font-medium flex items-center gap-2.5 ${st}">
+                      <span class="w-6 h-6 rounded-lg bg-slate-100 font-extrabold text-xs flex items-center justify-center shrink-0">${letters[oIdx]}</span>
+                      <span>${opt}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-xs font-bold ${retry.submitted ? (retry.isCorrect ? 'text-emerald-700' : 'text-rose-700') : 'text-slate-600'}">
+                  ${retry.submitted ? (retry.isCorrect ? '✓ Tuyệt vời! Bạn đã giải đúng bài tương tự và khắc phục xong lỗi này!' : '✗ Chưa đúng, hãy bấm "🔄 Đổi số khác" để thử lại nhé!') : 'Chọn đáp án rồi bấm Kiểm tra'}
+                </span>
+                ${!retry.submitted ? `
+                  <button type="button" data-mistake-retry-submit="${m.id}" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-sm">
+                    ✅ Kiểm Tra Câu Làm Lại
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <article class="bg-white rounded-2xl p-5 border-2 ${m.resolved ? 'border-emerald-300' : 'border-rose-200'} shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-lg ${m.resolved ? 'bg-emerald-600' : 'bg-rose-600'} text-white font-extrabold text-xs">
+                  ${m.resolved ? '✓ Đã khắc phục' : `⚠️ Câu sai #${idx + 1}`}
+                </span>
+                <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-800 font-bold text-xs">Khối Lớp ${m.grade} • ${m.sourceTitle}</span>
+                <span class="text-xs text-slate-400 font-mono">${m.date || ''}</span>
+              </div>
+              <button type="button" data-mistake-practice="${m.id}" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs shadow-sm transition">
+                🎲 Sinh Câu Tương Tự Đổi Số Để Làm Lại
+              </button>
+            </div>
+
+            <div class="text-sm sm:text-base text-slate-900 leading-relaxed">${m.stem}</div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900">
+                <strong>✗ Lựa chọn lúc làm sai:</strong> ${m.userWrongText}
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950">
+                <strong>✓ Đáp án đúng chuẩn:</strong> ${m.correctText}
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs sm:text-sm">
+              <div class="font-bold text-indigo-800">💡 Phân tích nguyên nhân & Phương pháp giải: ${m.analysis}</div>
+              ${(m.solutionSteps || []).map(s => `<div class="text-slate-700">• ${s}</div>`).join('')}
+            </div>
+
+            ${retryHtml}
+          </article>
+        `;
+      }).join('');
+
+      renderMathInContainer(container);
+    }
+
+    // ------------------------------------------------------------------------
+    // GROUP 1B: AI DIAGNOSTIC ROADMAP AFTER EXAM SUBMISSION
+    // ------------------------------------------------------------------------
+    function buildAiDiagnosticHtmlForSubmission(partScores, gradeStr) {
+      const g = String(gradeStr || appState.examGrade || '9');
+      const partMax = { 1: 1.5, 2: 1.5, 3: 2.5, 4: 4.0, 5: 0.5 };
+      const mapDiagnosticG9 = {
+        1: { name: 'Bài I (Thống kê & Xác suất)', topicId: 'cd8_tkxs', topicTitle: 'Chuyên đề 8: Thống kê & Xác suất' },
+        2: { name: 'Bài II (Rút gọn hai biểu thức A, B)', topicId: 'cd1_ab', topicTitle: 'Chuyên đề 1: Rút gọn hai biểu thức A, B' },
+        3: { name: 'Bài III (Toán thực tế & Hệ thức Vi-ét)', topicId: 'cd5_viet', topicTitle: 'Chuyên đề 5: Hệ thức Vi-ét & Tương giao' },
+        4: { name: 'Bài IV (Hình khối & Hình học Đường tròn)', topicId: 'cd6_hinh', topicTitle: 'Chuyên đề 6: Hình học Đường tròn' },
+        5: { name: 'Bài V (Câu chặn 10 — Cực trị & BĐT)', topicId: 'cd7_chan10', topicTitle: 'Chuyên đề 7: Cực trị & Bất đẳng thức' }
+      };
+      const mapDiagnosticG8 = {
+        1: { name: 'Bài I (Rút gọn & Thu gọn tính giá trị đa thức)', topicId: 'cd8_1_rutgon', topicTitle: 'Chuyên đề 1: Rút gọn biểu thức' },
+        2: { name: 'Bài II (Phân tích nhân tử, PT tích & Phân thức)', topicId: 'cd8_4_nhantu', topicTitle: 'Chuyên đề 4: Phân tích đa thức thành nhân tử' },
+        3: { name: 'Bài III (Hàm số bậc nhất & Toán thực tế)', topicId: 'cd8_8_hamso_pt', topicTitle: 'Chuyên đề 8: Hàm số bậc nhất & Toán thực tế' },
+        4: { name: 'Bài IV (Hình chóp, Tứ giác đặc biệt & Thales)', topicId: 'cd8_6_hinh_tugiac', topicTitle: 'Chuyên đề 6: Nhận biết tứ giác đặc biệt' },
+        5: { name: 'Bài V (Câu chặn 10 Lớp 8 — Cực trị đa thức)', topicId: 'cd8_10_chan10', topicTitle: 'Chuyên đề 10: Cực trị đa thức & Chia hết' }
+      };
+      const diagMap = g === '8' ? mapDiagnosticG8 : mapDiagnosticG9;
+
+      const weakParts = [1, 2, 3, 4, 5].filter(p => ((partScores[p] || 0) < partMax[p]));
+      if (weakParts.length === 0) {
+        return `
+          <div class="mt-4 p-4 rounded-2xl bg-emerald-950/60 border border-emerald-400/40 text-xs sm:text-sm text-emerald-200">
+            🎯 <strong>Chẩn đoán AI:</strong> Tuyệt đối 10/10! Bạn không mất điểm ở bất kỳ phần nào trong đề thi này.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="mt-4 pt-4 border-t border-slate-700 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-extrabold text-amber-300 uppercase">🎯 CHẨN ĐOÁN ĐIỂM YẾU & LỘ TRÌNH KHẮC PHỤC TỰ ĐỘNG (AI DIAGNOSTIC)</span>
+            <button type="button" data-nav-jump="mistake-notebook" class="px-3 py-1 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs">
+              📕 Mở Sổ Tay Câu Sai Để Luyện Lại →
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            ${weakParts.map(p => {
+              const d = diagMap[p];
+              const earned = partScores[p] || 0;
+              const lost = Number((partMax[p] - earned).toFixed(2));
+              return `
+                <div class="p-3 rounded-xl bg-slate-800/90 border border-slate-600 flex items-center justify-between gap-2 text-xs">
+                  <div>
+                    <div class="font-extrabold text-white">${d.name} <span class="text-rose-400">(-${lost}đ)</span></div>
+                    <div class="text-slate-300 text-[11px]">Khuyến nghị: Ôn ngay ${d.topicTitle}</div>
+                  </div>
+                  <button type="button" data-ai-fix-topic="${d.topicId}" data-ai-fix-grade="${g}" class="px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shrink-0">
+                    🔧 Luyện Ngay →
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ------------------------------------------------------------------------
+    // GROUP 2A: FLOATING SCRATCHPAD CANVAS & CASIO FX SCIENTIFIC CALCULATOR
+    // ------------------------------------------------------------------------
+    function initScratchpadAndCasio() {
+      const canvas = document.getElementById('scratchpadCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+      let strokeColor = '#0f172a';
+      let showGrid = true;
+
+      const drawGridBg = () => {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (!showGrid) return;
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 22) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 22) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+        // Subtle Oxy axes
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+      };
+      drawGridBg();
+
+      const getPos = (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+        const clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+      };
+
+      const startDraw = (ev) => {
+        drawing = true;
+        const p = getPos(ev);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      };
+      const moveDraw = (ev) => {
+        if (!drawing) return;
+        ev.preventDefault();
+        const p = getPos(ev);
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = strokeColor === '#ffffff' ? 16 : 2.4;
+        ctx.lineCap = 'round';
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      };
+      const endDraw = () => { drawing = false; };
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', endDraw);
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      window.addEventListener('touchend', endDraw);
+
+      document.querySelectorAll('.scratch-color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          strokeColor = btn.getAttribute('data-scratch-color') || '#0f172a';
+        });
+      });
+      document.getElementById('clearScratchpadBtn')?.addEventListener('click', drawGridBg);
+      document.getElementById('toggleScratchGridBtn')?.addEventListener('click', () => {
+        showGrid = !showGrid;
+        drawGridBg();
+      });
+
+      // Open/close Scratchpad & Casio modals
+      ['openScratchpadFromExamBtn', 'openScratchpadFromTopicBtn'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', () => {
+          document.getElementById('floatingScratchpadModal')?.classList.toggle('hidden');
+        });
+      });
+      document.getElementById('closeScratchpadModalBtn')?.addEventListener('click', () => {
+        document.getElementById('floatingScratchpadModal')?.classList.add('hidden');
+      });
+
+      ['openCasioFromExamBtn', 'openCasioFromTopicBtn'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', () => {
+          document.getElementById('floatingCasioModal')?.classList.toggle('hidden');
+        });
+      });
+      document.getElementById('closeCasioModalBtn')?.addEventListener('click', () => {
+        document.getElementById('floatingCasioModal')?.classList.add('hidden');
+      });
+
+      // Casio Mode Tabs
+      document.querySelectorAll('.casio-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-casio-tab');
+          document.querySelectorAll('.casio-tab-btn').forEach(b => {
+            b.className = b === btn
+              ? 'casio-tab-btn py-1.5 px-1 rounded-lg bg-sky-600 text-white'
+              : 'casio-tab-btn py-1.5 px-1 rounded-lg bg-white text-slate-700';
+          });
+          document.getElementById('casioTabExpr')?.classList.toggle('hidden', tab !== 'expr');
+          document.getElementById('casioTabQuad')?.classList.toggle('hidden', tab !== 'quad');
+          document.getElementById('casioTabSys')?.classList.toggle('hidden', tab !== 'sys');
+          document.getElementById('casioTabDiv')?.classList.toggle('hidden', tab !== 'div');
+        });
+      });
+
+      // Casio Expression Keypad
+      const exprInp = document.getElementById('casioExprInput');
+      const exprRes = document.getElementById('casioExprResult');
+      const evalCasioExpr = () => {
+        if (!exprInp || !exprRes) return;
+        try {
+          const raw = exprInp.value
+            .replace(/sqrt\(/g, 'Math.sqrt(')
+            .replace(/pi/g, 'Math.PI')
+            .replace(/\^/g, '**');
+          if (!raw.trim()) { exprRes.textContent = '= 0'; return; }
+          const val = Function('"use strict"; return (' + raw + ')')();
+          if (typeof val === 'number' && isFinite(val)) {
+            exprRes.textContent = '= ' + Number(val.toFixed(6));
+          } else {
+            exprRes.textContent = 'Lỗi phép tính';
+          }
+        } catch (e) {
+          exprRes.textContent = 'Lỗi cú pháp';
+        }
+      };
+      document.querySelectorAll('[data-casio-key]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const k = btn.getAttribute('data-casio-key');
+          if (!exprInp) return;
+          if (k === 'CLR') { exprInp.value = ''; exprRes.textContent = '= 0'; }
+          else if (k === 'DEL') { exprInp.value = exprInp.value.slice(0, -1); }
+          else if (k === '=') { evalCasioExpr(); }
+          else { exprInp.value += k; }
+        });
+      });
+      exprInp?.addEventListener('keydown', (e) => { if (e.key === 'Enter') evalCasioExpr(); });
+
+      // Casio Mode 2: Quadratic Equation
+      document.getElementById('solveCasioQuadBtn')?.addEventListener('click', () => {
+        const a = parseFloat(document.getElementById('casioQuadA')?.value || '1');
+        const b = parseFloat(document.getElementById('casioQuadB')?.value || '0');
+        const c = parseFloat(document.getElementById('casioQuadC')?.value || '0');
+        const out = document.getElementById('casioQuadOutput');
+        if (!out) return;
+        if (a === 0) {
+          out.textContent = b === 0 ? 'Phương trình vô nghiệm / vô số nghiệm' : `PT bậc nhất: x = ${Number((-c / b).toFixed(4))}`;
+          return;
+        }
+        const d = b * b - 4 * a * c;
+        const S = Number((-b / a).toFixed(4)), P = Number((c / a).toFixed(4));
+        if (d < 0) out.textContent = `Δ = ${Number(d.toFixed(3))} < 0 ⇒ Vô nghiệm thực`;
+        else if (d === 0) out.textContent = `Δ = 0 ⇒ Nghiệm kép x₁ = x₂ = ${Number((-b / (2 * a)).toFixed(4))} (S=${S}, P=${P})`;
+        else {
+          const x1 = Number(((-b + Math.sqrt(d)) / (2 * a)).toFixed(4));
+          const x2 = Number(((-b - Math.sqrt(d)) / (2 * a)).toFixed(4));
+          out.textContent = `Δ = ${Number(d.toFixed(3))} > 0 ⇒ x₁ = ${x1}; x₂ = ${x2} | S = ${S}, P = ${P}`;
+        }
+      });
+
+      // Casio Mode 3: 2x2 Linear System
+      document.getElementById('solveCasioSysBtn')?.addEventListener('click', () => {
+        const a1 = parseFloat(document.getElementById('casioSysA1')?.value || '1');
+        const b1 = parseFloat(document.getElementById('casioSysB1')?.value || '1');
+        const c1 = parseFloat(document.getElementById('casioSysC1')?.value || '0');
+        const a2 = parseFloat(document.getElementById('casioSysA2')?.value || '1');
+        const b2 = parseFloat(document.getElementById('casioSysB2')?.value || '-1');
+        const c2 = parseFloat(document.getElementById('casioSysC2')?.value || '0');
+        const D = a1 * b2 - a2 * b1;
+        const Dx = c1 * b2 - c2 * b1;
+        const Dy = a1 * c2 - a2 * c1;
+        const out = document.getElementById('casioSysOutput');
+        if (!out) return;
+        if (Math.abs(D) < 1e-12) {
+          out.textContent = 'Hệ phương trình vô nghiệm hoặc vô số nghiệm (D = 0)';
+        } else {
+          out.textContent = `Nghiệm duy nhất: x = ${Number((Dx / D).toFixed(4))} ; y = ${Number((Dy / D).toFixed(4))}`;
+        }
+      });
+
+      // Casio Mode 4: Integer Divisors U(n)
+      document.getElementById('solveCasioDivBtn')?.addEventListener('click', () => {
+        const n = Math.abs(parseInt(document.getElementById('casioDivInput')?.value || '6', 10));
+        const out = document.getElementById('casioDivOutput');
+        if (!out) return;
+        if (!n || n > 100000) { out.textContent = 'Nhập số nguyên dương n ≤ 100000'; return; }
+        const pos = [];
+        for (let k = 1; k <= n; k++) if (n % k === 0) pos.push(k);
+        const all = [...pos.map(x => -x).reverse(), ...pos];
+        out.textContent = `Ư(${n}) = {${all.join('; ')}} (Có ${all.length} ước nguyên)`;
+      });
+    }
+
+    // ------------------------------------------------------------------------
+    // GROUP 2B: ANTI-CHEAT PROCTORING (GIÁM SÁT CHỐNG GIAN LẬN KHI THI 90 PHÚT)
+    // ------------------------------------------------------------------------
+    function updateAntiCheatBadgeUI() {
+      const badge = document.getElementById('antiCheatStatusBadge');
+      if (!badge) return;
+      const v = appState.antiCheatViolations || 0;
+      badge.textContent = `🛡️ Giám sát: ${v}/3 lần rời tab`;
+      badge.className = v === 0
+        ? 'px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 text-[11px] font-extrabold flex items-center gap-1'
+        : 'px-2.5 py-1 rounded-lg bg-rose-100 border border-rose-400 text-rose-900 text-[11px] font-extrabold flex items-center gap-1 animate-pulse';
+    }
+
+    function recordAntiCheatLeaveEvent() {
+      if (appState.currentView !== 'exam-room' || appState.examStage !== 'taking' || appState.isSubmitted) return;
+      appState.antiCheatViolations = (appState.antiCheatViolations || 0) + 1;
+      updateAntiCheatBadgeUI();
+      showToast(`🛡️ Cảnh báo Giám sát Phòng Thi: Phát hiện rời màn hình bài thi (${appState.antiCheatViolations}/3 lần)! Số lần rời tab được ghi vào biên bản nộp bài.`, 'warning');
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) recordAntiCheatLeaveEvent();
+    });
+
+    // Reset anti-cheat counter & rubric steps when starting a new exam
+    const _v12StartExamSession = startExamSession;
+    startExamSession = function(examId) {
+      appState.antiCheatViolations = 0;
+      appState.rubricUserSteps = {};
+      _v12StartExamSession(examId);
+      updateAntiCheatBadgeUI();
+    };
+
+    // ------------------------------------------------------------------------
+    // GROUP 2C: STEP-BY-STEP RUBRIC (0.25đ BREAKDOWN) & GROUP 3A: INTERACTIVE GEOMETRY LAYERS (a, b, c) + HINTS
+    // ------------------------------------------------------------------------
+    function getRubricTemplateForQuestion(q) {
+      const pts = q.points || 0.75;
+      const s1 = Number((pts * 0.25).toFixed(2));
+      const s2 = Number((pts * 0.50).toFixed(2));
+      const s3 = Number((pts - s1 - s2).toFixed(2));
+      return [
+        { label: `Bước 1 (${s1}đ): ĐKXĐ / Chọn ẩn & điều kiện / Vẽ hình chuẩn`, hint: 'Ghi điều kiện xác định của biến hoặc gọi ẩn kèm đơn vị, điều kiện' },
+        { label: `Bước 2 (${s2}đ): Biến đổi đại số / Lập phương trình - Hệ thức hình học`, hint: 'Trình bày phép biến đổi trung gian hoặc hệ thức suy ra từ giả thiết' },
+        { label: `Bước 3 (${s3}đ): Đối chiếu điều kiện & Kết luận đáp số cuối cùng`, hint: 'Đối chiếu ĐKXĐ và ghi kết luận nghiệm / đáp số' }
+      ];
+    }
+
+    function getGeometryHintForDiagram(type) {
+      if (typeof type === 'string' && type.startsWith('quad_')) {
+        return '💡 Gợi ý kẻ đường phụ & Tư duy Hình học Lớp 8: Quan sát giao điểm O của hai đường chéo (hoặc đường trung bình nối hai trung điểm). Chứng minh tứ giác là Hình bình hành trước, sau đó kết hợp thêm 1 góc vuông (⇒ Hình chữ nhật) hoặc 2 cạnh kề bằng nhau / 2 đường chéo vuông góc (⇒ Hình thoi).';
+      }
+      if (type === 'tangent_secant') {
+        return '💡 Gợi ý kẻ đường phụ (Bài IV Đường tròn): Nối OB, OC (vuông góc tiếp tuyến tại B, C) và xét giao điểm H của OA với BC. Chứng minh OH·OA = OB² = R², từ đó suy ra AD·AE = AH·AO để chứng minh ΔADH ~ ΔAEO (c.g.c) và tứ giác DHOE nội tiếp.';
+      }
+      return '💡 Gợi ý kẻ đường phụ (Bài IV Đường tròn & Trực tâm H): Kẻ đường kính AK của đường tròn (O;R), nối BH và CK. Chứng minh BHCK là hình bình hành (do BH // CK cùng ⊥ AC và CH // BK cùng ⊥ AB), suy ra M là trung điểm HK và AH = 2OM không đổi.';
+    }
+
+    // Enhance drawQuestionGeometryDiagram to respect layerMode (1: Ý a, 2: Ý b, 3: Đầy đủ đường phụ Ý c)
+    const _v12DrawQuestionGeometryDiagram = drawQuestionGeometryDiagram;
+    drawQuestionGeometryDiagram = function(canvas, type, params) {
+      const layer = appState.geoLayerMode[canvas.id] || 3;
+      _v12DrawQuestionGeometryDiagram(canvas, type, params);
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+
+      // Overlay auxiliary construction lines when layer >= 2 or layer === 3
+      if (layer === 1) {
+        ctx.fillStyle = 'rgba(238, 242, 255, 0.92)';
+        ctx.fillRect(W - 145, 6, 139, 22);
+        ctx.fillStyle = '#312e81';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.fillText('👁️ Lớp hình: Cơ bản (Ý a)', W - 139, 20);
+      } else if (layer === 2) {
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 1.6;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(60, 115); ctx.lineTo(235, 115); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.95)';
+        ctx.fillRect(W - 150, 6, 144, 22);
+        ctx.fillStyle = '#0369a1';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.fillText('➕ Lớp hình: Mở rộng (Ý b)', W - 144, 20);
+      } else {
+        // Layer 3: highlight auxiliary dashed red line
+        ctx.strokeStyle = 'rgba(220, 38, 38, 0.75)';
+        ctx.lineWidth = 1.7;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(95, 48); ctx.lineTo(255, 175); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(254, 243, 199, 0.95)';
+        ctx.fillRect(W - 165, 6, 159, 22);
+        ctx.fillStyle = '#92400e';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.fillText('🚀 Đầy đủ đường phụ (Ý a,b,c)', W - 159, 20);
+      }
+    };
+
+    function attachInteractiveGeometryControlsToCanvases() {
+      document.querySelectorAll('canvas[id^="qDiagramCanvas_"], canvas[id^="topicGeoCanvas_"]').forEach(canvas => {
+        if (canvas.dataset.v13Enhanced === '1') return;
+        canvas.dataset.v13Enhanced = '1';
+        const cId = canvas.id;
+        const isTopicGeo = cId.startsWith('topicGeoCanvas_');
+        const qIdx = parseInt(cId.split('_')[1], 10);
+        const qObj = isTopicGeo ? appState.topicQuestions[qIdx] : appState.questions[qIdx];
+        const diagType = qObj?.hasDiagram || 'orthocenter_circle';
+
+        const ctrlDiv = document.createElement('div');
+        ctrlDiv.className = 'w-full mt-2 space-y-2 no-print';
+        ctrlDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-center gap-1.5">
+            <button type="button" data-geo-canvas="${cId}" data-geo-type="${diagType}" data-geo-layer="1" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-indigo-50 text-[11px] font-bold text-slate-700 transition">👁️ Hình Ý a</button>
+            <button type="button" data-geo-canvas="${cId}" data-geo-type="${diagType}" data-geo-layer="2" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-indigo-50 text-[11px] font-bold text-slate-700 transition">➕ Nét Ý b</button>
+            <button type="button" data-geo-canvas="${cId}" data-geo-type="${diagType}" data-geo-layer="3" class="px-2.5 py-1 rounded-lg border border-indigo-500 bg-indigo-50 text-[11px] font-extrabold text-indigo-800 transition">🚀 Đường phụ Ý c</button>
+            <button type="button" data-geo-hint-btn="${cId}" class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-[11px] font-extrabold transition">💡 Gợi ý kẻ đường phụ</button>
+          </div>
+          <div id="geoHintBox_${cId}" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-950 leading-relaxed">
+            ${getGeometryHintForDiagram(diagType)}
+          </div>
+        `;
+        canvas.parentNode.appendChild(ctrlDiv);
+      });
+    }
+
+    // Inject Step-by-Step Self-Grading Rubric (0.25đ steps) into Exam Question Cards
+    function attachRubricBoxesToExamQuestions() {
+      appState.questions.forEach((q, idx) => {
+        const card = document.getElementById(`questionCard_${idx}`);
+        if (!card || card.querySelector('.v13-rubric-box')) return;
+        const stepsMeta = getRubricTemplateForQuestion(q);
+        const state = appState.rubricUserSteps[idx] || { step0: '', step1: '', step2: '', open: false };
+        const showSol = appState.isSubmitted === true;
+
+        const rubricDiv = document.createElement('div');
+        rubricDiv.className = 'v13-rubric-box mt-3 pt-3 border-t border-slate-100 no-print';
+        rubricDiv.innerHTML = `
+          <div class="flex items-center justify-between">
+            <button type="button" data-toggle-rubric="${idx}" class="text-xs font-extrabold text-indigo-700 hover:text-indigo-900 flex items-center gap-1.5">
+              <span>✍️ Trình bày lời giải Tự luận từng bước (Rubric chấm thành phần 0,25đ)</span>
+              <span>${state.open ? '▲' : '▼'}</span>
+            </button>
+            ${showSol ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold">Đã đối chiếu thang điểm 0,25đ</span>` : ''}
+          </div>
+          <div id="rubricStepsPanel_${idx}" class="${state.open || showSol ? '' : 'hidden'} mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            ${stepsMeta.map((sm, sIdx) => `
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <div class="text-[11px] font-extrabold text-indigo-900">${sm.label}</div>
+                <input type="text" data-rubric-q="${idx}" data-rubric-step="${sIdx}" value="${state['step' + sIdx] || ''}" ${showSol ? 'disabled' : ''} placeholder="${sm.hint}" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs text-slate-800" />
+                ${showSol && q.solutionSteps && q.solutionSteps[sIdx] ? `<div class="text-[11px] text-emerald-800 bg-emerald-50 p-1.5 rounded border border-emerald-200">✓ Chuẩn: ${q.solutionSteps[sIdx]}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+        card.appendChild(rubricDiv);
+        renderMathInContainer(rubricDiv);
+      });
+    }
+
+    const _v11RenderExamQuestions = renderExamQuestions;
+    renderExamQuestions = function() {
+      _v11RenderExamQuestions();
+      attachInteractiveGeometryControlsToCanvases();
+      attachRubricBoxesToExamQuestions();
+    };
+
+    const _v11RenderTopicQuestionsList = renderTopicQuestionsList;
+    renderTopicQuestionsList = function() {
+      _v11RenderTopicQuestionsList();
+      attachInteractiveGeometryControlsToCanvases();
+    };
+
+    // Hook submitExam to record mistakes in Sổ Tay Câu Sai, attach AI Diagnostic, and record Anti-Cheat count
+    const _v12SubmitExam = submitExam;
+    submitExam = function() {
+      const wasSubmitted = appState.isSubmitted;
+      _v12SubmitExam();
+      if (!wasSubmitted && appState.isSubmitted) {
+        const acc = getCurrentAccount();
+        const catalog = getActiveExamCatalog();
+        const examMeta = catalog.find(e => e.id === appState.activeExamId) || catalog[0];
+        const letters = ['A', 'B', 'C', 'D'];
+
+        // Record any wrong question into Mistake Notebook
+        appState.questions.forEach((q, idx) => {
+          const ev = evaluateQuestionScore(idx);
+          if (!ev.isFullCorrect) {
+            const ans = appState.userAnswers[idx];
+            let userWrongText = 'Bỏ trống (Chưa chọn)';
+            let correctText = '';
+            if (q.qFormat === 'mcq') {
+              if (typeof ans === 'number' && q.options[ans]) userWrongText = `${letters[ans]}. ${q.options[ans]}`;
+              correctText = `${letters[q.correctIndex]}. ${q.options[q.correctIndex]}`;
+            } else if (q.qFormat === 'short') {
+              if (ans !== undefined && String(ans).trim() !== '') userWrongText = String(ans);
+              correctText = String(q.shortAnswer);
+            } else if (q.qFormat === 'tf') {
+              userWrongText = 'Chưa đúng đủ 4 mệnh đề Đúng/Sai';
+              correctText = (q.statements || []).map(s => `${s.label} ${s.isTrue ? 'Đúng' : 'Sai'}`).join(' | ');
+            }
+            recordMistakeItem(acc, {
+              grade: appState.examGrade || '9',
+              sourceTitle: `${examMeta.code} (${examMeta.school})`,
+              archetypeId: q.archetypeId || null,
+              stem: q.stem,
+              userWrongText,
+              correctText,
+              analysis: q.analysis,
+              solutionSteps: q.solutionSteps
+            });
+          }
+        });
+
+        // Attach antiCheatViolations to latest examHistory entry and append AI Diagnostic to examResultBanner
+        if (appState.examHistory.length > 0) {
+          const latest = appState.examHistory[0];
+          latest.violationsCount = appState.antiCheatViolations || 0;
+          saveAuthStore();
+          const banner = document.getElementById('examResultBanner');
+          if (banner) {
+            banner.innerHTML += buildAiDiagnosticHtmlForSubmission(latest.partScores || {}, appState.examGrade);
+            renderMathInContainer(banner);
+          }
+        }
+        syncSingleAccountToCloud(acc.username);
+      }
+    };
+
+    // ------------------------------------------------------------------------
+    // GROUP 3B: OFFICIAL A4 EXAM SHEET PRINT / PDF EXPORT
+    // ------------------------------------------------------------------------
+    function openA4PrintModal(includeSol = false) {
+      appState.printIncludeSolutions = includeSol;
+      const container = document.getElementById('a4PrintSheetContainer');
+      const modal = document.getElementById('printExamModalBackdrop');
+      if (!container || !modal) return;
+
+      const btnBlank = document.getElementById('printModeBlankBtn');
+      const btnSol = document.getElementById('printModeSolutionBtn');
+      if (btnBlank && btnSol) {
+        btnBlank.className = !includeSol
+          ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-extrabold text-xs'
+          : 'px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-extrabold text-xs';
+        btnSol.className = includeSol
+          ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-extrabold text-xs'
+          : 'px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-extrabold text-xs';
+      }
+
+      const catalog = getActiveExamCatalog();
+      const examMeta = catalog.find(e => e.id === appState.activeExamId) || catalog[0];
+      if (!appState.questions || appState.questions.length === 0) {
+        if (String(appState.examGrade) === '8') {
+          appState.questions = buildGrade8ExamQuestions(examMeta);
+        } else {
+          appState.questions = ALGO_ARCHETYPES.map(arch => buildQuestionByArchetype(arch.id, examMeta.seeds ? examMeta.seeds[arch.id] : null));
+        }
+      }
+
+      const letters = ['A', 'B', 'C', 'D'];
+      let qHtml = '';
+      appState.questions.forEach((q, idx) => {
+        let optsHtml = '';
+        if (q.qFormat === 'mcq' && Array.isArray(q.options)) {
+          optsHtml = `
+            <div class="grid grid-cols-2 gap-2 mt-2 text-xs sm:text-sm">
+              ${q.options.map((opt, oIdx) => `
+                <div class="${includeSol && oIdx === q.correctIndex ? 'font-extrabold text-emerald-800 underline' : ''}">
+                  <strong>${letters[oIdx]}.</strong> ${opt}
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.qFormat === 'short') {
+          optsHtml = `<div class="mt-2 text-xs italic text-slate-600">Đáp số tự luận / trả lời ngắn: ${includeSol ? `<strong class="text-emerald-800 not-italic">${q.shortAnswer}</strong>` : '....................................................'}</div>`;
+        } else if (q.qFormat === 'tf' && Array.isArray(q.statements)) {
+          optsHtml = `
+            <div class="mt-2 space-y-1 text-xs sm:text-sm">
+              ${q.statements.map(st => `<div><strong>${st.label}</strong> ${st.text} ${includeSol ? `<strong class="text-emerald-800">[${st.isTrue ? 'ĐÚNG' : 'SAI'}]</strong>` : '[Đúng / Sai]'}</div>`).join('')}
+            </div>
+          `;
+        }
+
+        // Convert canvas diagram to data URL if available
+        let imgHtml = '';
+        const existingCanvas = document.getElementById(`qDiagramCanvas_${idx}`);
+        if (existingCanvas) {
+          try {
+            const dataUrl = existingCanvas.toDataURL('image/png');
+            imgHtml = `<div class="my-2 flex justify-center"><img src="${dataUrl}" alt="Hình vẽ câu ${idx + 1}" class="max-w-[300px] border border-slate-300 rounded" /></div>`;
+          } catch (e) {}
+        }
+
+        const solBlock = includeSol ? `
+          <div class="mt-2 p-3 rounded-lg bg-slate-50 border border-slate-300 text-xs space-y-1">
+            <div><strong>Hướng dẫn chấm & Lời giải (${q.points} điểm):</strong> ${q.analysis}</div>
+            ${(q.solutionSteps || []).map(s => `<div>• ${s}</div>`).join('')}
+          </div>
+        ` : '';
+
+        qHtml += `
+          <div class="py-3 border-b border-slate-200 space-y-1.5">
+            <div class="font-extrabold text-sm">Câu ${idx + 1} (${q.points} điểm) — ${q.title}:</div>
+            <div class="text-sm leading-relaxed">${q.stem}</div>
+            ${imgHtml}
+            ${optsHtml}
+            ${solBlock}
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="grid grid-cols-2 gap-4 border-b-2 border-slate-900 pb-4 text-center text-xs sm:text-sm">
+          <div>
+            <div class="font-bold uppercase">SỞ GIÁO DỤC VÀ ĐÀO TẠO HÀ NỘI</div>
+            <div class="font-extrabold uppercase underline">${examMeta.school}</div>
+            <div class="mt-1 font-mono font-bold">MÃ ĐỀ: ${examMeta.code} (Level ${examMeta.level})</div>
+          </div>
+          <div>
+            <div class="font-extrabold uppercase">ĐỀ KHẢO SÁT & LUYỆN THI MÔN TOÁN (KHỐI LỚP ${appState.examGrade})</div>
+            <div class="font-bold">Năm học: ${examMeta.year} — Thời gian làm bài: 90 phút</div>
+            <div class="italic text-xs mt-1">(${includeSol ? 'Bản hướng dẫn chấm & lời giải chi tiết' : 'Đề thi gồm 12 câu hỏi chuẩn cấu trúc Hà Nội'})</div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          ${qHtml}
+        </div>
+        <div class="pt-4 text-center font-extrabold text-xs uppercase tracking-widest">— HẾT (Cán bộ coi thi không giải thích gì thêm) —</div>
+      `;
+
+      modal.classList.remove('hidden');
+      renderMathInContainer(container);
+    }
+
+    // Extend switchView to support 'mistake-notebook'
+    const _v12SwitchView = switchView;
+    switchView = function(viewName) {
+      const mEl = document.getElementById('view-mistake-notebook');
+      if (mEl) mEl.classList.toggle('hidden', viewName !== 'mistake-notebook');
+      _v12SwitchView(viewName);
+      if (viewName === 'mistake-notebook') {
+        renderMistakeNotebookView();
+      }
+      updateMistakeSidebarBadge();
+    };
+
+    // Global event bindings for V13 features
+    document.body.addEventListener('click', (e) => {
+      // 1. Record mistake when student submits a wrong answer in Topic Room
+      const submitTopicQBtn = e.target.closest('[data-topic-submit-q]');
+      if (submitTopicQBtn) {
+        const qIdx = parseInt(submitTopicQBtn.getAttribute('data-topic-submit-q'), 10);
+        setTimeout(() => {
+          const qObj = appState.topicQuestions[qIdx];
+          const userAns = appState.topicUserAnswers[qIdx];
+          if (qObj && userAns !== undefined && userAns !== qObj.correctIndex) {
+            const acc = getCurrentAccount();
+            const letters = ['A', 'B', 'C', 'D'];
+            recordMistakeItem(acc, {
+              grade: appState.topicGrade || '9',
+              sourceTitle: `Chuyên đề (${qObj.subtypeName})`,
+              topicId: appState.activeTopicId,
+              stem: qObj.stem,
+              userWrongText: `${letters[userAns]}. ${qObj.options[userAns]}`,
+              correctText: `${letters[qObj.correctIndex]}. ${qObj.options[qObj.correctIndex]}`,
+              analysis: qObj.analysis,
+              solutionSteps: qObj.solutionSteps
+            });
+          }
+        }, 50);
+      }
+
+      // 2. Mistake Notebook: Generate Algorithmic Retry Problem
+      const pracBtn = e.target.closest('[data-mistake-practice]');
+      if (pracBtn) {
+        const mId = pracBtn.getAttribute('data-mistake-practice');
+        const acc = getCurrentAccount();
+        const mObj = ensureMistakeNotebookArray(acc).find(x => x.id === mId);
+        if (mObj) {
+          let newProb = null;
+          if (mObj.archetypeId) {
+            newProb = buildQuestionByArchetype(mObj.archetypeId, null);
+          } else {
+            const tList = generateTopicQuestionList(mObj.topicId || 'cd1_ab', Math.floor(Math.random() * 12) + 2);
+            newProb = tList[Math.floor(Math.random() * tList.length)];
+          }
+          if (newProb && (!newProb.options || newProb.options.length === 0)) {
+            const mcq = makeMcqOptions(`$${newProb.shortAnswer || '12'}$`, [`$${Number(newProb.shortAnswer || 10) + 2}$`, `$${Number(newProb.shortAnswer || 10) - 2}$`, `$0$`]);
+            newProb.options = mcq.options;
+            newProb.correctIndex = mcq.correctIndex;
+          }
+          appState.mistakeRetryState[mId] = { problem: newProb, selectedOpt: undefined, submitted: false, isCorrect: false };
+          renderMistakeNotebookView();
+        }
+        return;
+      }
+
+      const retryOptBtn = e.target.closest('[data-mistake-retry-opt]');
+      if (retryOptBtn) {
+        const mId = retryOptBtn.getAttribute('data-mistake-retry-opt');
+        const oIdx = parseInt(retryOptBtn.getAttribute('data-opt-idx'), 10);
+        const st = appState.mistakeRetryState[mId];
+        if (st && !st.submitted) {
+          st.selectedOpt = oIdx;
+          renderMistakeNotebookView();
+        }
+        return;
+      }
+
+      const retrySubBtn = e.target.closest('[data-mistake-retry-submit]');
+      if (retrySubBtn) {
+        const mId = retrySubBtn.getAttribute('data-mistake-retry-submit');
+        const st = appState.mistakeRetryState[mId];
+        if (!st || st.selectedOpt === undefined) {
+          showToast('Vui lòng chọn 1 đáp án trước khi bấm Kiểm tra!', 'warning');
+          return;
+        }
+        st.submitted = true;
+        st.isCorrect = st.selectedOpt === st.problem.correctIndex;
+        if (st.isCorrect) {
+          const acc = getCurrentAccount();
+          const mObj = ensureMistakeNotebookArray(acc).find(x => x.id === mId);
+          if (mObj) {
+            mObj.resolved = true;
+            saveAuthStore();
+            updateMistakeSidebarBadge();
+            syncSingleAccountToCloud(acc.username);
+          }
+          showToast('🎉 Chính xác! Câu hỏi đã được đánh dấu Đã khắc phục thành công!', 'success');
+        } else {
+          showToast('Chưa chính xác. Hãy bấm "🔄 Đổi số khác" để luyện lại nhé!', 'warning');
+        }
+        renderMistakeNotebookView();
+        return;
+      }
+
+      // 3. AI Diagnostic Direct Topic Fix Button
+      const aiFixBtn = e.target.closest('[data-ai-fix-topic]');
+      if (aiFixBtn) {
+        const tId = aiFixBtn.getAttribute('data-ai-fix-topic');
+        const g = aiFixBtn.getAttribute('data-ai-fix-grade') || '9';
+        appState.topicGrade = g;
+        switchView('topic-room');
+        openTopicPracticeSession(tId);
+        return;
+      }
+
+      // 4. Interactive Geometry Layer Toggle (Ý a | Ý b | Đường phụ Ý c) & Auxiliary Line Hint
+      const geoLayerBtn = e.target.closest('[data-geo-layer]');
+      if (geoLayerBtn) {
+        const cId = geoLayerBtn.getAttribute('data-geo-canvas');
+        const dType = geoLayerBtn.getAttribute('data-geo-type');
+        const lv = parseInt(geoLayerBtn.getAttribute('data-geo-layer'), 10);
+        appState.geoLayerMode[cId] = lv;
+        const canvas = document.getElementById(cId);
+        if (canvas) drawQuestionGeometryDiagram(canvas, dType, {});
+        return;
+      }
+
+      const geoHintBtn = e.target.closest('[data-geo-hint-btn]');
+      if (geoHintBtn) {
+        const cId = geoHintBtn.getAttribute('data-geo-hint-btn');
+        const box = document.getElementById(`geoHintBox_${cId}`);
+        if (box) box.classList.toggle('hidden');
+        return;
+      }
+
+      // 5. Toggle Step-by-Step Rubric Box
+      const rubBtn = e.target.closest('[data-toggle-rubric]');
+      if (rubBtn) {
+        const qIdx = parseInt(rubBtn.getAttribute('data-toggle-rubric'), 10);
+        if (!appState.rubricUserSteps[qIdx]) appState.rubricUserSteps[qIdx] = { open: false };
+        appState.rubricUserSteps[qIdx].open = !appState.rubricUserSteps[qIdx].open;
+        const panel = document.getElementById(`rubricStepsPanel_${qIdx}`);
+        if (panel) panel.classList.toggle('hidden', !appState.rubricUserSteps[qIdx].open);
+        return;
+      }
+    });
+
+    document.body.addEventListener('input', (e) => {
+      const rubInp = e.target.closest('[data-rubric-q]');
+      if (rubInp) {
+        const qIdx = parseInt(rubInp.getAttribute('data-rubric-q'), 10);
+        const sIdx = rubInp.getAttribute('data-rubric-step');
+        if (!appState.rubricUserSteps[qIdx]) appState.rubricUserSteps[qIdx] = { open: true };
+        appState.rubricUserSteps[qIdx]['step' + sIdx] = rubInp.value;
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initScratchpadAndCasio();
+      updateMistakeSidebarBadge();
+
+      document.getElementById('mistakeFilterSelect')?.addEventListener('change', renderMistakeNotebookView);
+      document.getElementById('clearResolvedMistakesBtn')?.addEventListener('click', () => {
+        const acc = getCurrentAccount();
+        if (acc && Array.isArray(acc.mistakeNotebook)) {
+          acc.mistakeNotebook = acc.mistakeNotebook.filter(m => !m.resolved);
+          saveAuthStore();
+          renderMistakeNotebookView();
+          updateMistakeSidebarBadge();
+          showToast('Đã dọn sạch các câu đã khắc phục khỏi Sổ tay!', 'info');
+        }
+      });
+
+      document.getElementById('openPrintA4FromExamBtn')?.addEventListener('click', () => openA4PrintModal(false));
+      document.getElementById('printModeBlankBtn')?.addEventListener('click', () => openA4PrintModal(false));
+      document.getElementById('printModeSolutionBtn')?.addEventListener('click', () => openA4PrintModal(true));
+      document.getElementById('closePrintExamModalBtn')?.addEventListener('click', () => {
+        document.getElementById('printExamModalBackdrop')?.classList.add('hidden');
+      });
+      document.getElementById('triggerBrowserPrintBtn')?.addEventListener('click', () => {
+        window.print();
+      });
     });
 
   </script>

@@ -1509,6 +1509,33 @@
       </div>
     </div>
 
+        <!-- ==================== ADMIN DELETE ACCOUNT CONFIRMATION MODAL ==================== -->
+    <div id="adminDeleteUserModalBackdrop" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-md w-full p-6 border-2 border-rose-300 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div class="flex items-center gap-2 text-rose-700 font-extrabold text-sm sm:text-base">
+            <span>🗑️ XÁC NHẬN XÓA TÀI KHOẢN HỌC SINH</span>
+          </div>
+          <button type="button" id="closeAdminDeleteUserModalBtn" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">✕</button>
+        </div>
+        <div class="space-y-2 text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <p>Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản <strong id="deleteTargetUsernameLabel" class="text-rose-700 font-mono text-base">hocsinh</strong> khỏi toàn bộ hệ thống?</p>
+          <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1">
+            <div>• Toàn bộ dữ liệu lịch sử thi và tiến độ của tài khoản này sẽ bị xóa trên mọi thiết bị (đồng bộ Đám mây).</div>
+            <div>• Lượt sử dụng Mã Kích Hoạt của tài khoản này sẽ được thu hồi để cấp cho học sinh khác.</div>
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" id="cancelAdminDeleteUserBtn" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+            Hủy bỏ
+          </button>
+          <button type="button" id="confirmAdminDeleteUserBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+            <span>🗑️</span> <span>Xác Nhận Xóa Vĩnh Viễn</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== STARTUP AUTHENTICATION, SAVED CREDENTIALS & DEDICATED ACTIVATION PORTAL ==================== -->
     <div id="authModalBackdrop" class="fixed inset-0 z-50 bg-gradient-to-br from-indigo-100/95 via-sky-50/95 to-amber-50/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
       <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 border-2 border-indigo-100 shadow-[0_20px_60px_-15px_rgba(79,70,229,0.22)] space-y-4 my-auto relative overflow-hidden">
@@ -11711,6 +11738,567 @@
       });
       document.getElementById('triggerBrowserPrintBtn')?.addEventListener('click', () => {
         window.print();
+      });
+    });
+
+
+    // ============================================================================
+    // 20. V14 ENGINE: ADMIN GRANULAR EXAM LEVEL UNLOCKING (LV 1..5 FOR GRADE 8 & 9)
+    //     AND ADMIN ACCOUNT DELETION WITH CLOUD TOMBSTONE SYNC
+    // ============================================================================
+
+    let pendingDeleteUsername = null;
+
+    // Load persisted deleted user tombstones (maps usernameLower -> deletedTimestamp)
+    CLOUD_SYNC_CONFIG.deletedUserMap = (() => {
+      try {
+        const raw = localStorage.getItem('hanoimath10_deleted_users_v14');
+        return raw ? (JSON.parse(raw) || {}) : {};
+      } catch (e) {
+        return {};
+      }
+    })();
+
+    function saveDeletedUserMap() {
+      try {
+        localStorage.setItem('hanoimath10_deleted_users_v14', JSON.stringify(CLOUD_SYNC_CONFIG.deletedUserMap));
+      } catch (e) {}
+    }
+
+    // Ensure every account has `adminUnlockedLevels: { '8': [1], '9': [1] }`
+    function ensureAdminUnlockedLevels(acc) {
+      if (!acc) return { '8': [1], '9': [1] };
+      if (!acc.adminUnlockedLevels || typeof acc.adminUnlockedLevels !== 'object') {
+        acc.adminUnlockedLevels = { '8': [1], '9': [1] };
+      }
+      if (!Array.isArray(acc.adminUnlockedLevels['8'])) acc.adminUnlockedLevels['8'] = [1];
+      if (!Array.isArray(acc.adminUnlockedLevels['9'])) acc.adminUnlockedLevels['9'] = [1];
+      if (!acc.adminUnlockedLevels['8'].includes(1)) acc.adminUnlockedLevels['8'].unshift(1);
+      if (!acc.adminUnlockedLevels['9'].includes(1)) acc.adminUnlockedLevels['9'].unshift(1);
+      if (acc.role === 'admin' && acc.username === 'duytam939') {
+        acc.adminUnlockedLevels['8'] = [1, 2, 3, 4, 5];
+        acc.adminUnlockedLevels['9'] = [1, 2, 3, 4, 5];
+      }
+      return acc.adminUnlockedLevels;
+    }
+
+    // Upgrade serializeCompactAccount & expandCompactAccount to include `lvUnl` (adminUnlockedLevels)
+    const _v12SerializeCompactAccount = serializeCompactAccount;
+    serializeCompactAccount = function(acc) {
+      const base = _v12SerializeCompactAccount(acc);
+      if (!base) return null;
+      const lvMap = ensureAdminUnlockedLevels(acc);
+      base.lvUnl = {
+        '8': lvMap['8'],
+        '9': lvMap['9']
+      };
+      return base;
+    };
+
+    const _v12ExpandCompactAccount = expandCompactAccount;
+    expandCompactAccount = function(c) {
+      const exp = _v12ExpandCompactAccount(c);
+      if (!exp) return null;
+      if (c && c.lvUnl && typeof c.lvUnl === 'object') {
+        exp.adminUnlockedLevels = {
+          '8': Array.isArray(c.lvUnl['8']) ? c.lvUnl['8'].map(Number) : [1],
+          '9': Array.isArray(c.lvUnl['9']) ? c.lvUnl['9'].map(Number) : [1]
+        };
+      }
+      ensureAdminUnlockedLevels(exp);
+      return exp;
+    };
+
+    // Upgrade mergeSingleAccountIntoStore to respect deletedUserMap tombstones AND merge adminUnlockedLevels
+    const _v12MergeSingleAccountIntoStore = mergeSingleAccountIntoStore;
+    mergeSingleAccountIntoStore = function(incomingRaw) {
+      const inc = expandCompactAccount(incomingRaw);
+      if (!inc || !inc.username) return false;
+      const lowerU = inc.username.toLowerCase();
+      if (lowerU !== 'duytam939') {
+        const delTs = CLOUD_SYNC_CONFIG.deletedUserMap[lowerU];
+        const incUpd = inc.updatedAt || 1;
+        // If this user was deleted after or at the time of this packet, ignore it!
+        if (delTs && incUpd <= delTs) {
+          return false;
+        }
+        // If user re-registered with a strictly newer timestamp than the deletion, clear tombstone
+        if (delTs && incUpd > delTs) {
+          delete CLOUD_SYNC_CONFIG.deletedUserMap[lowerU];
+          saveDeletedUserMap();
+        }
+      }
+
+      const prevEx = authStore.accounts.find(a => a.username.toLowerCase() === lowerU);
+      const prevAdmTs = prevEx ? (prevEx.adminUpdatedAt || 0) : 0;
+      const changed = _v12MergeSingleAccountIntoStore(inc);
+      const target = authStore.accounts.find(a => a.username.toLowerCase() === lowerU);
+      if (target) {
+        ensureAdminUnlockedLevels(target);
+        const incAdmTs = inc.adminUpdatedAt || 0;
+        if (inc.adminUnlockedLevels && incAdmTs >= prevAdmTs) {
+          target.adminUnlockedLevels = {
+            '8': Array.isArray(inc.adminUnlockedLevels['8']) ? [...new Set([1, ...inc.adminUnlockedLevels['8'].map(Number)])] : [1],
+            '9': Array.isArray(inc.adminUnlockedLevels['9']) ? [...new Set([1, ...inc.adminUnlockedLevels['9'].map(Number)])] : [1]
+          };
+          return true;
+        }
+      }
+      return changed;
+    };
+
+    // Apply deletedUsers map when receiving cloud packets
+    function applyDeletedUsersMap(incomingDeletedUsers) {
+      if (!incomingDeletedUsers || typeof incomingDeletedUsers !== 'object') return false;
+      let anyRemoved = false;
+      Object.keys(incomingDeletedUsers).forEach(uKey => {
+        const lower = uKey.toLowerCase();
+        if (lower === 'duytam939') return;
+        const delTs = Number(incomingDeletedUsers[uKey]) || Date.now();
+        const curDelTs = CLOUD_SYNC_CONFIG.deletedUserMap[lower] || 0;
+        if (delTs > curDelTs) {
+          CLOUD_SYNC_CONFIG.deletedUserMap[lower] = delTs;
+        }
+        const idx = authStore.accounts.findIndex(a => a.username.toLowerCase() === lower && (a.updatedAt || 0) <= delTs);
+        if (idx >= 0) {
+          const removedUser = authStore.accounts[idx].username;
+          authStore.accounts.splice(idx, 1);
+          // Free code usage
+          authStore.codes.forEach(c => {
+            if (Array.isArray(c.usedBy)) {
+              c.usedBy = c.usedBy.filter(u => u.toLowerCase() !== lower);
+            }
+          });
+          anyRemoved = true;
+          // If this device is currently logged in as the deleted user, log out immediately!
+          if (authStore.isAuthenticated && authStore.currentUsername && authStore.currentUsername.toLowerCase() === lower) {
+            authStore.isAuthenticated = false;
+            authStore.currentUsername = 'hocsinh01';
+            document.getElementById('authModalBackdrop')?.classList.remove('hidden');
+            showToast(`⚠️ Tài khoản "${removedUser}" đã bị Quản trị viên xóa khỏi hệ thống!`, 'warning');
+          }
+        }
+      });
+      if (anyRemoved) {
+        saveDeletedUserMap();
+        saveAuthStore();
+      }
+      return anyRemoved;
+    }
+
+    const _v12MergeIncomingCloudPacket = mergeIncomingCloudPacket;
+    mergeIncomingCloudPacket = function(packet, shouldSave = true) {
+      if (!packet || typeof packet !== 'object') return false;
+      let removedAny = false;
+      if (packet.deletedUsers) {
+        removedAny = applyDeletedUsersMap(packet.deletedUsers);
+      }
+      const mergedAny = _v12MergeIncomingCloudPacket(packet, shouldSave);
+      if (removedAny) {
+        refreshAuthAndRoleUI();
+        if (isCurrentUserAdmin()) renderAdminDashboard();
+      }
+      return removedAny || mergedAny;
+    };
+
+    // Override isExamLevelUnlockedForUser so Admin-unlocked levels (`acc.adminUnlockedLevels[g]`) unlock immediately!
+    const _v12IsExamLevelUnlockedForUser = isExamLevelUnlockedForUser;
+    isExamLevelUnlockedForUser = function(acc, targetLevel, gradeOverride) {
+      const g = String(gradeOverride || appState.examGrade || '9');
+      const lvNum = Number(targetLevel) || 1;
+      if (!acc) return { unlocked: false, reason: 'Chưa đăng nhập' };
+      if (acc.role === 'admin' && acc.username === 'duytam939') {
+        return { unlocked: true, reason: '👑 Toàn quyền Admin (Mở khóa toàn bộ 5 Level)' };
+      }
+      const scCheck = isCourseScopeUnlocked(acc, g === '8' ? 'exam_8' : 'exam_9');
+      if (!scCheck.active) {
+        return { unlocked: false, reason: scCheck.reason };
+      }
+      if (lvNum <= 1) {
+        return { unlocked: true, reason: `Mức đầu (Level 1 Lớp ${g}) luôn mở` };
+      }
+      const lvMap = ensureAdminUnlockedLevels(acc);
+      if (Array.isArray(lvMap[g]) && lvMap[g].includes(lvNum)) {
+        return { unlocked: true, reason: `🔓 Đã được Admin mở khóa trực tiếp Level ${lvNum} (Khối Lớp ${g})` };
+      }
+      return _v12IsExamLevelUnlockedForUser(acc, lvNum, g);
+    };
+
+    // Helper: Toggle or set unlocked levels for a student by Admin
+    function adminToggleStudentLevelUnlock(username, gradeStr, levelNum, forceMode = null) {
+      if (!isCurrentUserAdmin()) return;
+      const u = authStore.accounts.find(a => a.username === username);
+      if (!u || u.role === 'admin') return;
+      const g = String(gradeStr) === '8' ? '8' : '9';
+      const lvMap = ensureAdminUnlockedLevels(u);
+
+      // Ensure the exam course scope for that grade is also unlocked when Admin unlocks levels
+      const reqScope = g === '8' ? 'exam_8' : 'exam_9';
+      if (!Array.isArray(u.unlockedScopes)) u.unlockedScopes = [];
+      if (!u.unlockedScopes.includes(reqScope)) {
+        u.unlockedScopes.push(reqScope);
+        u.isActivated = true;
+        if (!u.activationCodeUsed) u.activationCodeUsed = 'ADMIN-LEVEL-UNLOCK';
+      }
+
+      if (forceMode === 'all') {
+        lvMap[g] = [1, 2, 3, 4, 5];
+        showToast(`🔓 Đã mở khóa toàn bộ 5 Level (Level 1 → 5) Khối Lớp ${g} cho tài khoản "${u.username}"!`, 'success');
+      } else if (forceMode === 'reset') {
+        lvMap[g] = [1];
+        showToast(`🔒 Đã đặt lại khóa Level 2 → 5 (Khối Lớp ${g}) theo tiến độ 60% mặc định cho "${u.username}".`, 'info');
+      } else {
+        const lv = Number(levelNum);
+        if (lv <= 1) {
+          showToast('Level 1 là mức khởi đầu luôn được mở sẵn!', 'info');
+          return;
+        }
+        if (lvMap[g].includes(lv)) {
+          lvMap[g] = lvMap[g].filter(x => x !== lv);
+          showToast(`🔒 Đã khóa lại Level ${lv} (Khối Lớp ${g}) của tài khoản "${u.username}".`, 'info');
+        } else {
+          lvMap[g].push(lv);
+          lvMap[g].sort((a, b) => a - b);
+          showToast(`🔓 Đã mở khóa trực tiếp Level ${lv} (Khối Lớp ${g}) cho tài khoản "${u.username}"!`, 'success');
+        }
+      }
+
+      u.adminUpdatedAt = Date.now();
+      u.updatedAt = Date.now();
+      saveAuthStore();
+      renderAdminDashboard();
+      refreshAuthAndRoleUI();
+      syncSingleAccountToCloud(u.username);
+    }
+
+    // Helper: Delete a student account permanently across all devices
+    function executeAdminDeleteAccount(username) {
+      if (!isCurrentUserAdmin() || !username) return;
+      if (username.toLowerCase() === 'duytam939') {
+        showToast('Không thể xóa tài khoản Quản trị viên gốc (duytam939)!', 'warning');
+        return;
+      }
+      const idx = authStore.accounts.findIndex(a => a.username.toLowerCase() === username.toLowerCase());
+      if (idx < 0) {
+        showToast(`Không tìm thấy tài khoản "${username}"!`, 'warning');
+        return;
+      }
+      const removed = authStore.accounts.splice(idx, 1)[0];
+      const lower = removed.username.toLowerCase();
+
+      // Free up activation code slots
+      authStore.codes.forEach(c => {
+        if (Array.isArray(c.usedBy)) {
+          c.usedBy = c.usedBy.filter(u => u.toLowerCase() !== lower);
+        }
+      });
+
+      // Remove from device saved credentials if present
+      if (Array.isArray(authStore.savedCredentials)) {
+        authStore.savedCredentials = authStore.savedCredentials.filter(c => c.username.toLowerCase() !== lower);
+      }
+
+      // Record tombstone and broadcast to Cloud so all other machines delete this account too
+      CLOUD_SYNC_CONFIG.deletedUserMap[lower] = Date.now();
+      saveDeletedUserMap();
+
+      if (authStore.inspectedUsername && authStore.inspectedUsername.toLowerCase() === lower) {
+        const nextStudent = authStore.accounts.find(a => a.role !== 'admin') || authStore.accounts[0];
+        authStore.inspectedUsername = nextStudent ? nextStudent.username : 'duytam939';
+      }
+
+      saveAuthStore();
+      renderSavedCredentialsList();
+      renderAdminDashboard();
+      refreshAuthAndRoleUI();
+
+      pushCloudPacket({
+        type: 'user_delete',
+        deletedUsers: CLOUD_SYNC_CONFIG.deletedUserMap,
+        codes: authStore.codes.slice(0, 25)
+      });
+
+      showToast(`🗑️ Đã xóa vĩnh viễn tài khoản "${removed.username}" (${removed.fullName || ''}) trên toàn hệ thống!`, 'success');
+    }
+
+    // Enhance renderExamCatalog so Admin sees a direct '👑 Admin: Mở Khóa Level X Cho Tất Cả HS' button on each Level header bar
+    const _v13RenderExamCatalog = renderExamCatalog;
+    renderExamCatalog = function() {
+      _v13RenderExamCatalog();
+      if (!isCurrentUserAdmin()) return;
+      const g = String(appState.examGrade || '9');
+      const container = document.getElementById('examCardsGrid');
+      if (!container) return;
+
+      const levelHeaders = container.querySelectorAll('.math-level-header');
+      levelHeaders.forEach((hdr, idx) => {
+        const lv = idx + 1;
+        if (lv >= 2 && !hdr.querySelector('[data-admin-unlock-level-all]')) {
+          const btnWrap = hdr.querySelector('div:last-child');
+          if (btnWrap) {
+            const adminBtn = document.createElement('button');
+            adminBtn.type = 'button';
+            adminBtn.setAttribute('data-admin-unlock-level-all', String(lv));
+            adminBtn.setAttribute('data-admin-unlock-grade', g);
+            adminBtn.className = 'px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-[11px] shadow-sm transition';
+            adminBtn.textContent = `👑 Mở Khóa Lv${lv} Cho Tất Cả HS`;
+            btnWrap.prepend(adminBtn);
+          }
+        }
+      });
+    };
+
+    // Upgrade renderAdminDashboard & renderAdminStudentInspector to display Level 1..5 Unlock toggles and Delete Account button
+    const _v13RenderAdminDashboard = renderAdminDashboard;
+    renderAdminDashboard = function() {
+      _v13RenderAdminDashboard();
+      if (!isCurrentUserAdmin()) return;
+
+      const accTbody = document.getElementById('adminAccountsTableBody');
+      if (accTbody) {
+        accTbody.innerHTML = authStore.accounts.map(u => {
+          ensureAdminUnlockedLevels(u);
+          const uniqueExamCount = Object.keys(u.uniqueExamsDone || {}).length;
+          const hist = u.examHistory || [];
+          const avgScore = hist.length > 0 ? (hist.reduce((s, h) => s + h.score, 0) / hist.length).toFixed(2) : '--';
+          const bestScore = hist.length > 0 ? Math.max(...hist.map(h => h.score)).toFixed(2) : '--';
+          const topicGate9 = getAllTopicsGateSummary(u, '9');
+          const topicGate8 = getAllTopicsGateSummary(u, '8');
+          const isInspected = u.username === authStore.inspectedUsername;
+          const uScopes = Array.isArray(u.unlockedScopes) ? u.unlockedScopes : [];
+
+          const scopeBadgesHtml = ALL_COURSE_SCOPE_IDS.map(sc => {
+            const has = u.role === 'admin' || uScopes.includes(sc);
+            const meta = COURSE_SCOPES_META[sc];
+            return `
+              <button type="button" data-admin-toggle-scope="${u.username}" data-scope-id="${sc}" class="px-1.5 py-0.5 rounded border text-[10px] font-extrabold transition ${has ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-slate-100 text-slate-400 border-slate-200'}" title="Bấm để Bật/Tắt ${meta.fullLabel}">
+                ${has ? '✓' : '🔒'} ${meta.shortLabel}
+              </button>
+            `;
+          }).join(' ');
+
+          // Build Level 1..5 toggle pills for Grade 8 & Grade 9
+          const buildLvPills = (gradeStr) => {
+            if (u.role === 'admin') {
+              return `<span class="text-[10px] font-extrabold text-amber-700">👑 Mở sẵn Lv1–5 (Lớp ${gradeStr})</span>`;
+            }
+            const btns = [1, 2, 3, 4, 5].map(lv => {
+              const unl = isExamLevelUnlockedForUser(u, lv, gradeStr).unlocked;
+              const isManual = u.adminUnlockedLevels?.[gradeStr]?.includes(lv);
+              return `
+                <button type="button" data-admin-toggle-lv="${u.username}" data-lv-grade="${gradeStr}" data-lv-num="${lv}" class="px-1.5 py-0.5 rounded text-[10px] font-extrabold border transition ${unl ? (isManual && lv > 1 ? 'bg-amber-400 text-slate-950 border-amber-500' : 'bg-emerald-100 text-emerald-800 border-emerald-300') : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-indigo-50 hover:text-indigo-700'}" title="Bấm để Mở khóa / Khóa Level ${lv} (Khối Lớp ${gradeStr})">
+                  ${unl ? '🔓' : '🔒'}Lv${lv}
+                </button>
+              `;
+            }).join('');
+            return `
+              <div class="flex flex-wrap items-center gap-1">
+                <span class="text-[10px] font-extrabold ${gradeStr === '8' ? 'text-sky-800' : 'text-indigo-900'} w-8">Lớp ${gradeStr}:</span>
+                ${btns}
+                <button type="button" data-admin-lv-preset="${u.username}" data-lv-grade="${gradeStr}" data-preset-mode="all" class="px-1.5 py-0.5 rounded bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-extrabold" title="Mở toàn bộ 5 Level Lớp ${gradeStr}">Mở hết</button>
+                <button type="button" data-admin-lv-preset="${u.username}" data-lv-grade="${gradeStr}" data-preset-mode="reset" class="px-1.5 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 text-[9px] font-bold" title="Đặt lại khóa tự động theo 60%">Khóa</button>
+              </div>
+            `;
+          };
+
+          return `
+            <tr class="${isInspected ? 'bg-indigo-50/70' : 'hover:bg-slate-50'}">
+              <td class="py-3 px-3 font-mono font-extrabold text-indigo-900">
+                ${u.username}
+                ${u.role === 'admin' ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px]">ADMIN</span>` : ''}
+              </td>
+              <td class="py-3 px-3 font-mono text-slate-600">${u.password}</td>
+              <td class="py-3 px-3 font-semibold text-slate-800">${u.fullName || u.username}</td>
+              <td class="py-3 px-3 space-y-1.5">
+                <div class="flex flex-wrap gap-1">${scopeBadgesHtml}</div>
+                <div class="pt-1 border-t border-slate-200/80 space-y-1">
+                  ${buildLvPills('8')}
+                  ${buildLvPills('9')}
+                </div>
+              </td>
+              <td class="py-3 px-3 font-bold text-slate-800">${uniqueExamCount} / 50 đề (${hist.length} lượt nộp)</td>
+              <td class="py-3 px-3 font-bold text-indigo-700">TB: ${avgScore} • Cao: ${bestScore}</td>
+              <td class="py-3 px-3 font-bold text-xs">
+                <div class="text-sky-700">Lớp 8: ${topicGate8.passedCount}/${topicGate8.totalRequiredTopics} CĐ</div>
+                <div class="text-indigo-700">Lớp 9: ${topicGate9.passedCount}/${topicGate9.totalRequiredTopics} CĐ</div>
+              </td>
+              <td class="py-3 px-3 text-right space-y-1 whitespace-nowrap">
+                <div class="flex items-center justify-end gap-1">
+                  <button data-admin-inspect="${u.username}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs">
+                    🔍 Chi Tiết
+                  </button>
+                  ${u.role !== 'admin' ? `
+                    <button data-admin-toggle-act="${u.username}" class="px-2 py-1 rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs">
+                      ${u.isActivated ? 'Khóa TK' : '🔓 Mở 4 Khóa'}
+                    </button>
+                  ` : ''}
+                </div>
+                ${u.role !== 'admin' ? `
+                  <div class="flex items-center justify-end gap-1">
+                    <button data-admin-grant-unlock="${u.username}" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-extrabold text-[11px]" title="Mở khóa toàn bộ 5 Level Đề thi Lớp 8 & Lớp 9">
+                      ⚡ Mở Full 5 Lv
+                    </button>
+                    <button type="button" data-admin-delete-user="${u.username}" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[11px] shadow-sm transition" title="Xóa vĩnh viễn tài khoản này khỏi hệ thống">
+                      🗑️ Xóa TK
+                    </button>
+                  </div>
+                ` : ''}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Also enhance the Student Detail Inspector Panel with interactive Level Unlock controls & Delete button
+      const inspectorPanel = document.getElementById('adminStudentDetailPanel');
+      const targetUser = authStore.accounts.find(a => a.username === authStore.inspectedUsername) || authStore.accounts[0];
+      if (inspectorPanel && targetUser && targetUser.role !== 'admin') {
+        ensureAdminUnlockedLevels(targetUser);
+        const lvControlBox = document.createElement('div');
+        lvControlBox.className = 'p-4 rounded-2xl bg-indigo-50/70 border-2 border-indigo-200 space-y-3';
+        lvControlBox.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="text-xs sm:text-sm font-extrabold text-indigo-950">
+              🔓 BẢNG ĐIỀU KHIỂN MỞ KHÓA LEVEL ĐỀ THI & QUẢN TRỊ TÀI KHOẢN: <span class="text-indigo-600 font-mono">${targetUser.username}</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" data-admin-grant-unlock="${targetUser.username}" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-sm">
+                ⚡ Mở Khóa Toàn Bộ 5 Level (Lớp 8 & 9)
+              </button>
+              <button type="button" data-admin-delete-user="${targetUser.username}" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-sm">
+                🗑️ Xóa Tài Khoản Này
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            ${['8', '9'].map(gStr => `
+              <div class="p-3 rounded-xl bg-white border border-indigo-100 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold ${gStr === '8' ? 'text-sky-800' : 'text-indigo-900'}">📐 Mở Khóa Level Đề Khối Lớp ${gStr}:</span>
+                  <div class="flex gap-1">
+                    <button type="button" data-admin-lv-preset="${targetUser.username}" data-lv-grade="${gStr}" data-preset-mode="all" class="px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold">Mở hết Lv1–5</button>
+                    <button type="button" data-admin-lv-preset="${targetUser.username}" data-lv-grade="${gStr}" data-preset-mode="reset" class="px-2 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-bold">Đặt lại</button>
+                  </div>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5">
+                  ${[1, 2, 3, 4, 5].map(lv => {
+                    const unl = isExamLevelUnlockedForUser(targetUser, lv, gStr).unlocked;
+                    return `
+                      <button type="button" data-admin-toggle-lv="${targetUser.username}" data-lv-grade="${gStr}" data-lv-num="${lv}" class="p-2 rounded-lg border text-center transition ${unl ? 'bg-emerald-50 border-emerald-400 text-emerald-900 font-extrabold' : 'bg-slate-50 border-slate-200 text-slate-500 font-semibold hover:border-indigo-400'}">
+                        <div class="text-[11px]">Level ${lv}</div>
+                        <div class="text-[10px] mt-0.5">${unl ? '🔓 Đã mở' : '🔒 Khóa'}</div>
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        inspectorPanel.prepend(lvControlBox);
+      }
+    };
+
+    // Global click handlers for V14 Admin Level Unlocking & Account Deletion
+    document.addEventListener('click', (e) => {
+      // 1. Toggle individual level unlock for a student
+      const toggleLvBtn = e.target.closest('[data-admin-toggle-lv]');
+      if (toggleLvBtn && isCurrentUserAdmin()) {
+        e.stopPropagation();
+        const uname = toggleLvBtn.getAttribute('data-admin-toggle-lv');
+        const gStr = toggleLvBtn.getAttribute('data-lv-grade') || '9';
+        const lvNum = parseInt(toggleLvBtn.getAttribute('data-lv-num'), 10);
+        adminToggleStudentLevelUnlock(uname, gStr, lvNum, null);
+        return;
+      }
+
+      // 2. Preset all/reset levels for a student in a grade
+      const presetLvBtn = e.target.closest('[data-admin-lv-preset]');
+      if (presetLvBtn && isCurrentUserAdmin()) {
+        e.stopPropagation();
+        const uname = presetLvBtn.getAttribute('data-admin-lv-preset');
+        const gStr = presetLvBtn.getAttribute('data-lv-grade') || '9';
+        const mode = presetLvBtn.getAttribute('data-preset-mode');
+        adminToggleStudentLevelUnlock(uname, gStr, 1, mode);
+        return;
+      }
+
+      // 3. Upgrade 'data-admin-grant-unlock' to unlock all 5 levels for both Grade 8 and Grade 9
+      const grantAllBtn = e.target.closest('[data-admin-grant-unlock]');
+      if (grantAllBtn && isCurrentUserAdmin()) {
+        e.stopPropagation();
+        const uname = grantAllBtn.getAttribute('data-admin-grant-unlock');
+        const u = authStore.accounts.find(a => a.username === uname);
+        if (u) {
+          u.isActivated = true;
+          u.unlockedScopes = [...ALL_COURSE_SCOPE_IDS];
+          u.adminUnlockedLevels = { '8': [1, 2, 3, 4, 5], '9': [1, 2, 3, 4, 5] };
+          u.adminUpdatedAt = Date.now();
+          u.updatedAt = Date.now();
+          saveAuthStore();
+          renderAdminDashboard();
+          refreshAuthAndRoleUI();
+          syncSingleAccountToCloud(u.username);
+          showToast(`⚡ Đã mở khóa toàn bộ 4 Khóa học & cả 5 Level Đề thi (Lớp 8 & Lớp 9) cho tài khoản "${u.username}"!`, 'success');
+        }
+        return;
+      }
+
+      // 4. Unlock a specific level for ALL students directly from the Exam Lobby Level header bar
+      const unlockAllStudentsBtn = e.target.closest('[data-admin-unlock-level-all]');
+      if (unlockAllStudentsBtn && isCurrentUserAdmin()) {
+        e.stopPropagation();
+        const lv = parseInt(unlockAllStudentsBtn.getAttribute('data-admin-unlock-level-all'), 10);
+        const gStr = unlockAllStudentsBtn.getAttribute('data-admin-unlock-grade') || appState.examGrade || '9';
+        authStore.accounts.forEach(u => {
+          if (u.role !== 'admin') {
+            const lvMap = ensureAdminUnlockedLevels(u);
+            if (!lvMap[gStr].includes(lv)) lvMap[gStr].push(lv);
+            u.adminUpdatedAt = Date.now();
+            u.updatedAt = Date.now();
+          }
+        });
+        saveAuthStore();
+        pushAllAccountsAndCodesToCloud();
+        renderExamCatalog();
+        showToast(`👑 Đã mở khóa Level ${lv} (Khối Lớp ${gStr}) cho toàn bộ tài khoản học sinh trong hệ thống!`, 'success');
+        return;
+      }
+
+      // 5. Open Delete Account Confirmation Modal
+      const delUserBtn = e.target.closest('[data-admin-delete-user]');
+      if (delUserBtn && isCurrentUserAdmin()) {
+        e.stopPropagation();
+        const uname = delUserBtn.getAttribute('data-admin-delete-user');
+        if (uname === 'duytam939') {
+          showToast('Không thể xóa tài khoản Admin gốc!', 'warning');
+          return;
+        }
+        pendingDeleteUsername = uname;
+        const lbl = document.getElementById('deleteTargetUsernameLabel');
+        if (lbl) lbl.textContent = uname;
+        document.getElementById('adminDeleteUserModalBackdrop')?.classList.remove('hidden');
+        return;
+      }
+    }, true);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Purge any locally stored accounts that are in deletedUserMap on startup
+      applyDeletedUsersMap(CLOUD_SYNC_CONFIG.deletedUserMap);
+      authStore.accounts.forEach(ensureAdminUnlockedLevels);
+
+      document.getElementById('closeAdminDeleteUserModalBtn')?.addEventListener('click', () => {
+        document.getElementById('adminDeleteUserModalBackdrop')?.classList.add('hidden');
+      });
+      document.getElementById('cancelAdminDeleteUserBtn')?.addEventListener('click', () => {
+        document.getElementById('adminDeleteUserModalBackdrop')?.classList.add('hidden');
+      });
+      document.getElementById('confirmAdminDeleteUserBtn')?.addEventListener('click', () => {
+        if (pendingDeleteUsername) {
+          executeAdminDeleteAccount(pendingDeleteUsername);
+          pendingDeleteUsername = null;
+        }
+        document.getElementById('adminDeleteUserModalBackdrop')?.classList.add('hidden');
       });
     });
 
